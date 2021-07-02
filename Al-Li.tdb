@@ -1,0 +1,244 @@
+$AL-LI$ -----------------------------------------------------------------------------
+$ 2009.3.22
+$ 
+$ TDB file created by K.Hashimoto, T.Abe and Y.Sawada
+$
+$ Particle Simulation and Thermodynamics Group, National Institute for 
+$ Materials Science. 1-2-1 Sengen, Tsukuba, Ibaraki 305-0047, Japan
+$ 
+$ e-mail: abe.taichi@nims.go.jp
+$
+$ Copyright (C) NIMS 2009
+$
+$-------------------------------------------------------------------------------
+$
+$ The parameter set is taken from 
+$
+$     2009-03-22
+$
+$     Thermodynamic assessment of the Al-Li system
+$     R.Hallstedt,O.Kim,
+$     International J. Mat. Res. (formerly Z.Metallkd.) 98 (2007), 961-969.
+$
+$
+$-------------------------------------------------------------------------------
+$   
+ ELEMENT /-   ELECTRON_GAS              0.0000E+00  0.0000E+00  0.0000E+00!
+ ELEMENT VA   VACUUM                    0.0000E+00  0.0000E+00  0.0000E+00!
+ ELEMENT AL   FCC_A1                    2.6982E+01  4.5773E+03  2.8322E+01! 
+ ELEMENT LI   BCC_A2                    6.9410E+00  4.6233E+03  2.9095E+01!
+
+$
+$-------------------------------------------------------------------------------
+$ 
+                                                                              
+ Function GHSERAL    298.15
+        -7976.15+137.093038*T-24.3671976*T*LN(T)-1.884662E-3*T**2
+        -0.877664E-6*T**3+74092*T**(-1);       700 Y
+        -11276.24+223.048446*T-38.5844296*T*LN(T)+18.531982E-3*T**2
+        -5.764227E-6*T**3+74092*T**(-1);       933.47 Y
+        -11278.378+188.684153*T-31.748192*T*LN(T)
+        -1230.524E25*T**(-9);                  2900 N !
+ Function GALLIQ     298.15
+        3028.879+125.251171*T-24.3671976*T*LN(T)-1.884662E-3*T**2
+        -0.877664E-6*T**3+74092*T**(-1)+79.337E-21*T**7;            700 Y
+        -271.21+211.206579*T-38.5844296*T*LN(T)+18.531982E-3*T**2
+        -5.764227E-6*T**3+74092*T**(-1)+79.337E-21*T**7;            933.47 Y
+        -795.996+177.430178*T-31.748192*T*LN(T);                    2900 N !
+ Function GALBCC     298.15
+        2106.85+132.280038*T-24.3671976*T*LN(T)-1.884662E-3*T**2
+        -0.877664E-6*T**3+74092*T**(-1);                            700 Y
+        -1193.24+218.235446*T-38.5844296*T*LN(T)+18.531982E-3*T**2
+        -5.764227E-6*T**3+74092*T**(-1);                            933.47 Y
+        -1195.378+183.871153*T-31.748192*T*LN(T)
+        -1230.524E25*T**(-9);                                       2900 N !
+
+ Function GHSERLI     200.00
+        -10583.817+217.637482*T-38.940488*T*LN(T)+35.466931E-3*T**2
+        -19.869816E-6*T**3+159994*T**(-1);                          453.60 Y
+        -559579.123+10547.879893*T-1702.8886493*T*LN(T)+2258.329444E-3*T**2
+        -571.066077E-6*T**3+33885874*T**(-1);                       500 Y
+        -9062.994+179.278285*T-31.2283718*T*LN(T)+2.633221E-3*T**2
+        -0.438058E-6*T**3-102387*T**(-1);                           3000 N !
+ 
+ Function GLILIQ      200.00
+        -7883.612+211.841861*T-38.940488*T*LN(T)+35.466931E-3*T**2
+        -19.869816E-6*T**3+159994*T**(-1);                          250 Y
+        12015.027-362.187078*T+61.6104424*T*LN(T)-182.426463E-3*T**2
+        +63.955671E-6*T**3-559968*T**(-1);                          453.60 Y
+        -6057.31+172.652183*T-31.2283718*T*LN(T)+2.633221E-3*T**2
+        -0.438058E-6*T**3-102387*T**(-1);                           3000 N !
+
+ 
+ Function GLIFCC      200.00
+        -10691.817+218.937482*T-38.940488*T*LN(T)+35.466931E-3*T**2
+        -19.869816E-6*T**3+159994*T**(-1);                           453.60 Y
+        -559687.123+10549.179893*T-1702.8886493*T*LN(T)+2258.329444E-3*T**2
+        -571.066077E-6*T**3+33885874*T**(-1);                        500 Y
+        -9170.994+180.578285*T-31.2283718*T*LN(T)+2.633221E-3*T**2
+        -0.438058E-6*T**3-102387*T**(-1);                            3000 N !
+
+ Function UB1     298.15   -3360+1.80*T;            6000  N ! $ Bcc
+ Function UB2     298.15   -4230+1.86*T;            6000  N ! $ Bcc
+ Function LBREC   298.15   +15000;                  6000  N ! $ Bcc
+ Function DBAL3LI 298.15   +3700;                   6000  N ! $ Bcc
+ Function DBALLI3 298.15   +3250;                   6000  N ! $ Bcc
+ Function LB0     298.15   +0;                      6000  N ! $ Bcc
+ Function LB1     298.15   +0;                      6000  N ! $ Bcc
+ Function LB2     298.15   +0;                      6000  N ! $ Bcc
+
+ Function GBAL3LI 298.15   +2*UB1+1.5*UB2+DBAL3LI;  6000  N ! $ Bcc
+ Function GBB2    298.15   +4*UB1;                  6000  N ! $ Bcc
+ Function GBB32   298.15   +2*UB1+3*UB2;            6000  N ! $ Bcc
+ Function GBALLI3 298.15   +2*UB1+1.5*UB2+DBALLI3;  6000  N ! $ Bcc
+
+ Function UF1     298.15   -3270+1.96*T;            6000  N ! $ Fcc
+ Function LFREC   298.15   +UF1;                    6000  N ! $ Fcc
+ Function DFAL3LI 298.15   +1750-4.7*T;             6000  N ! $ Fcc
+ Function DFALLI3 298.15   +4900;                   6000  N ! $ Fcc
+ Function LF0     298.15   +2960-1.56*T;            6000  N ! $ Fcc
+ Function LF1     298.15   +0;                      6000  N ! $ Fcc
+ Function LF2     298.15   +0;                      6000  N ! $ Fcc
+
+ Function GFAL3LI   298.15   +3*UF1+DFAL3LI;        6000  N ! $ Fcc
+ Function GFAL2LI2  298.15   +4*UF1;                6000  N ! $ Fcc
+ Function GFALLI3   298.15   +3*UF1+DFALLI3;        6000  N ! $ Fcc
+
+ Function UN_ASS     298.15   0;                    6000  N !
+ Function ZERO       298.15   0;                    6000  N !
+
+$
+$-------------------------------------------------------------------------------
+$ 
+$
+ TYPE_DEFINITION % SEQ *!
+$
+ PHASE LIQUID  %  1  1  !
+   CONSTITUENT LIQUID :AL,LI: !
+   Para  G(LIQUID,AL;0)  298.15  +GALLIQ;               6000 N !
+   Para  G(LIQUID,LI;0)  298.15  +GLILIQ;               6000 N ! 
+   Para  G(LIQUID,AL,LI;0)    298.15  -44200+20.6*T;    6000 N !
+   Para  G(LIQUID,AL,LI;1)    298.15  +13600-5.3*T;     6000 N !
+   Para  G(LIQUID,AL,LI;2)    298.15  +14200;           6000 N !
+   Para  G(LIQUID,AL,LI;3)    298.15  -12100;           6000 N !
+   Para  G(LIQUID,AL,LI;4)    298.15  -7100;            6000 N !
+
+TYPE_DEFINITION + GES A_P_D BCC_DIS MAGNETIC  -1.0    0.4 !
+ PHASE BCC_DIS  %+  1   1   !
+   CONSTITUENT BCC_DIS  :AL,LI:  !
+   Para  G(BCC_DIS,AL;0)  298.15     +GALBCC  +1;              6000 N !
+   Para  G(BCC_DIS,LI;0)  298.15     +GHSERLI +1;              6000 N !
+   Para  G(BCC_DIS,AL,LI;0)  298.15
+                     +GBAL3LI+0.5*GBB2+GBB32 +GBALLI3+4*LB0; 6000 N !
+   Para  G(BCC_DIS,AL,LI;1)  298.15 +2*GBAL3LI-2*GBALLI3+4*LB1; 6000 N !
+   Para  G(BCC_DIS,AL,LI;2)  298.15
+                     +GBAL3LI-0.5*GBB2-GBB32 +GBALLI3+4*LB2; 6000 N !
+
+
+TYPE_DEFINITION - GES A_P_D BCC_A2 MAGNETIC  -1.0    0.4 !
+ PHASE BCC_A2  %-  1   1   !
+   CONSTITUENT BCC_A2  :AL,LI:  !
+   Para  G(BCC_A2,AL;0)  298.15     +GALBCC;               6000 N !
+   Para  G(BCC_A2,LI;0)  298.15     +GHSERLI;              6000 N !
+   Para  G(BCC_A2,AL,LI;0)  298.15  
+                    +GBAL3LI+0.5*GBB2+GBB32 +GBALLI3+4*LB0; 6000 N !
+   Para  G(BCC_A2,AL,LI;1)  298.15 +2*GBAL3LI-2*GBALLI3+4*LB1; 6000 N !
+   Para  G(BCC_A2,AL,LI;2)  298.15 
+                    +GBAL3LI-0.5*GBB2-GBB32 +GBALLI3+4*LB2; 6000 N !
+
+
+
+Type_Definition ( GES A_P_D BCC_B2 dis_part BCC_A2 ,,,!
+ PHASE BCC_B2 %(  4  0.25  0.25  0.25  0.25  !
+   CONSTITUENT BCC_B2  :AL,LI:AL,LI:AL,LI:AL,LI:  !
+   Para  G(BCC_B2, AL:AL:AL:AL;0) 298.15        +0;       6000 N !
+   Para  G(BCC_B2, LI:LI:LI:LI;0) 298.15        +0;       6000 N !
+$  D03  AL3LI1  (L12- B3C) 
+   Para  G(BCC_B2, LI:AL:AL:AL;0) 298.15  GBAL3LI;       6000 N !
+   Para  G(BCC_B2, AL:LI:AL:AL;0) 298.15  GBAL3LI;       6000 N !
+   Para  G(BCC_B2, AL:AL:LI:AL;0) 298.15  GBAL3LI;       6000 N !
+   Para  G(BCC_B2, AL:AL:AL:LI;0) 298.15  GBAL3LI;       6000 N !
+$  B2-ALLI, B32-ALLI   (L10- BC) 
+   Para  G(BCC_B2, AL:AL:LI:LI;0) 298.15  GBB2;          6000 N !
+   Para  G(BCC_B2, AL:LI:AL:LI;0) 298.15  GBB32;         6000 N !
+   Para  G(BCC_B2, AL:LI:LI:AL;0) 298.15  GBB32;         6000 N !
+   Para  G(BCC_B2, LI:AL:AL:LI;0) 298.15  GBB32;         6000 N !
+   Para  G(BCC_B2, LI:AL:LI:AL;0) 298.15  GBB32;         6000 N !
+   Para  G(BCC_B2, LI:LI:AL:AL;0) 298.15  GBB2;          6000 N !
+$  D03  AL1LI3  (L12- BC3)
+   Para  G(BCC_B2, AL:LI:LI:LI;0) 298.15  GBALLI3;       6000 N !
+   Para  G(BCC_B2, LI:AL:LI:LI;0) 298.15  GBALLI3;       6000 N !
+   Para  G(BCC_B2, LI:LI:AL:LI;0) 298.15  GBALLI3;       6000 N !
+   Para  G(BCC_B2, LI:LI:LI:AL;0) 298.15  GBALLI3;       6000 N !
+$
+$  Regular Parameters
+$          B,C:*:*:*: = 0
+$        
+$  RECIPROCAL Parameter S, SRO
+$
+   Para  G(BCC_B2, AL,LI:AL,LI:*:*;0) 298.15  LBREC;    6000 N !
+   Para  G(BCC_B2, AL,LI:*:AL,LI:*;0) 298.15  LBREC;    6000 N !
+   Para  G(BCC_B2, AL,LI:*:*:AL,LI;0) 298.15  LBREC;    6000 N !
+   Para  G(BCC_B2, *:AL,LI:AL,LI:*;0) 298.15  LBREC;    6000 N !
+   Para  G(BCC_B2, *:AL,LI:*:AL,LI;0) 298.15  LBREC;    6000 N !
+   Para  G(BCC_B2, *:*:AL,LI:AL,LI;0) 298.15  LBREC;    6000 N !
+
+
+TYPE_DEFINITION / GES A_P_D FCC_A1 MAGNETIC  -3.0    0.28 !
+ PHASE FCC_A1  %/   1    1    !
+   CONSTITUENT FCC_A1  :AL,LI:  !
+   Para  G(FCC_A1,AL;0)  298.15 +GHSERAL;                   6000 N !
+   Para  G(FCC_A1,LI;0)  298.15 +GLIFCC;                    6000 N !
+   Para  G(FCC_A1,AL,LI;0)  298.15 
+                 +GFAL3LI+1.5*GFAL2LI2+GFALLI3+1.5*LFREC+4*LF0;  6000 N !
+   Para  G(FCC_A1,AL,LI;1)  298.15 
+                 +2*GFAL3LI-2*GFALLI3+4*LF1;  6000 N !
+   Para  G(FCC_A1,AL,LI;2)  298.15
+                 +GFAL3LI-1.5*GFAL2LI2+GFALLI3-1.5*LFREC+4*LF2;  6000 N !
+
+Type_Definition ) GES A_P_D ORDER dis_part FCC_A1 ,,,!
+ PHASE ORDER %)  4  0.25  0.25  0.25  0.25  !
+   CONSTITUENT ORDER  :AL,LI:AL,LI:AL,LI:AL,LI:  !
+   Para  G(ORDER, AL:AL:AL:AL;0) 298.15        0;       6000 N !
+   Para  G(ORDER, LI:LI:LI:LI;0) 298.15        0;       6000 N !
+$  (L12- B3C) 
+   Para  G(ORDER, LI:AL:AL:AL;0) 298.15  GFAL3LI;       6000 N !
+   Para  G(ORDER, AL:LI:AL:AL;0) 298.15  GFAL3LI;       6000 N !
+   Para  G(ORDER, AL:AL:LI:AL;0) 298.15  GFAL3LI;       6000 N !
+   Para  G(ORDER, AL:AL:AL:LI;0) 298.15  GFAL3LI;       6000 N !
+$  (L10- BC) 
+   Para  G(ORDER, AL:AL:LI:LI;0) 298.15  GFAL2LI2;      6000 N !
+   Para  G(ORDER, AL:LI:AL:LI;0) 298.15  GFAL2LI2;      6000 N !
+   Para  G(ORDER, AL:LI:LI:AL;0) 298.15  GFAL2LI2;      6000 N !
+   Para  G(ORDER, LI:AL:AL:LI;0) 298.15  GFAL2LI2;      6000 N !
+   Para  G(ORDER, LI:AL:LI:AL;0) 298.15  GFAL2LI2;      6000 N !
+   Para  G(ORDER, LI:LI:AL:AL;0) 298.15  GFAL2LI2;      6000 N !
+$  (L12- BC3)
+   Para  G(ORDER, AL:LI:LI:LI;0) 298.15  GFALLI3;       6000 N !
+   Para  G(ORDER, LI:AL:LI:LI;0) 298.15  GFALLI3;       6000 N !
+   Para  G(ORDER, LI:LI:AL:LI;0) 298.15  GFALLI3;       6000 N !
+   Para  G(ORDER, LI:LI:LI:AL;0) 298.15  GFALLI3;       6000 N !
+$
+$  Regular Parameters
+$          B,C:*:*:*: = 0
+$        
+$  RECIPROCAL Parameters, SRO
+$
+   Para  G(ORDER, AL,LI:AL,LI:*:*;0) 298.15  LFREC;    6000 N !
+   Para  G(ORDER, AL,LI:*:AL,LI:*;0) 298.15  LFREC;    6000 N !
+   Para  G(ORDER, AL,LI:*:*:AL,LI;0) 298.15  LFREC;    6000 N !
+   Para  G(ORDER, *:AL,LI:AL,LI:*;0) 298.15  LFREC;    6000 N !
+   Para  G(ORDER, *:AL,LI:*:AL,LI;0) 298.15  LFREC;    6000 N !
+   Para  G(ORDER, *:*:AL,LI:AL,LI;0) 298.15  LFREC;    6000 N !
+
+
+ PHASE AL2LI3  %   2   2   3 !
+   CONSTITUENT AL2LI3  :AL: LI :  !
+   Para  G(AL2LI3,AL:LI;0)  298.15 -93990+34.5*T+2*GHSERAL+3*GHSERLI; 6000 N !
+
+
+ PHASE AL4LI9  %   2   4   9 !
+   CONSTITUENT AL4LI9  :AL: LI :  !
+   Para  G(AL4LI9,AL:LI;0)  298.15 -193780+71.7*T+4*GHSERAL+9*GHSERLI; 6000 N !
+
+$-end
