@@ -38,6 +38,9 @@ for phase_name in my_phases_nbre:
     
     x = tempx.squeeze()     
     y = temp.squeeze()
+
+    #Here the (x,y) pairs of points are but into a more simple and callable form
+     #This portion of the code needs to be changed but all it does is get the hull of the gibbs surface
     if phase_name=='LIQUID':
         minihull=[]
     for i in range(len(x)):
@@ -55,7 +58,9 @@ for phase_name in my_phases_nbre:
             liquidy.extend(minihull[simplex,1].tolist())
         x=liquidx
         y=liquidy
-    estimate=np.polyfit(x,y,5)
+    #From this point all the code makes a polynomial estimate of the specific phase curve 
+    #then find the derivative
+    estimate=np.polyfit(x,y,8)
     derivative=background.find_derivative(estimate)
     alphapot=[]
     betapot=[]
@@ -71,17 +76,9 @@ for phase_name in my_phases_nbre:
     ax.scatter(x,y, marker='.', s=5, color=color_dict[phase_name])
 
         
-    
-    # name="Al-Li |"+phase_name+"| T="+str(temper)+".csv"
-    # with open(name, "w+") as f:
-    #     row_writer=csv.writer(f,delimiter=',')
-    #     try:
-    #         for i in range(len(x)):
-    #             row_writer.writerow([str(x[i]),str(y[i])])
-    #     except TypeError:
-
-    #             row_writer.writerow([str(x),str(y)])
-
+    #This commented portion takes the values attained and turns them into a csv file labeling what it is
+    # background.csvform("Mg", "Bi", phase_name, temper)
+#This finds the convex hull of the plot
 hullval=np.array(hullval)
 hull = ConvexHull(hullval)
 

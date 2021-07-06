@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from pycalphad import Database, calculate, variables as v
 from pycalphad.plot.utils import phase_legend
 import numpy as np
-
+#This file is just a dump for the functions used for all of the Gibbs curve files.
 def line(m,x,y,comp):
     val=m*(comp-x)+y
     return val
@@ -32,3 +32,13 @@ def find_potentials(m,x,y,test,comp=0):
     else:
         val=m*(comp-x)+y
         return val
+def csvform(e1,e2,phase_name,temper):
+    name=e1+"-"+e2+" |"+phase_name+"| T="+str(temper)+".csv"
+    with open(name, "w+") as f:
+        row_writer=csv.writer(f,delimiter=',')
+        try:
+            for i in range(len(x)):
+                row_writer.writerow([str(x[i]),str(y[i])])
+        except TypeError:
+
+                row_writer.writerow([str(x),str(y)])

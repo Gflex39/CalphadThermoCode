@@ -32,18 +32,19 @@ hullval=[]
 # Loop over phases, calculate the Gibbs energy, and scatter plot GM vs. X(RE)
 for phase_name in my_phases_nbre:
     result = calculate(db_nbre, ['AL', 'LI','VA'], phase_name, P=101325, T=temper, output='GM')
-    # if phase_name=='BCC_B2':
-    #     ax.scatter(result.X.sel(component='LI'),result.GM, marker='.', s=10, color=color_dict[phase_name])
     print(phase_name)
+
     temp=result.GM.values
     tempx=result.X.sel(component='LI').values
 
    
     x = tempx.squeeze() 
-    
     y = temp.squeeze()
+    #Here the (x,y) pairs of points are but into a more simple and callable form
+    #We use a try except case here because one of the phases has only one data point. Meaning when
+    #try to ge the length it gives a type eror
     try:
-    # if 1==1:
+        #This portion of the code needs to be changed but all it does is get the hull of the gibbs surface
         if phase_name=='BCC_B2':
             minihull=[]
         for i in range(len(x)):
@@ -65,12 +66,14 @@ for phase_name in my_phases_nbre:
 
             x=liquidx
             y=liquidy
-        
+        #From this point all the code makes a polynomial estimate of the specific phase curve 
+        #then find the derivative
         estimate=np.polyfit(x,y,8)
         derivative=background.find_derivative(estimate)
         alphapot=[]
         betapot=[]
         for i in range(len(x)):
+            #This derivative is used to find the potential of the phase at each composition
             slope=derivative(x[i])
             potential=background.find_potentials(slope, x[i], y[i], True)
             alphapot.append(potential[0])
@@ -79,20 +82,11 @@ for phase_name in my_phases_nbre:
         phase_potentials[phase_name]={'alpha':alphapot,'beta':betapot,'x':x}
     except TypeError:
         print("We good")
-    
-  
-    
+    #The points are the plotted
     ax.scatter(x,y, marker='.', s=5, color=color_dict[phase_name])
-    # name="Al-Li |"+phase_name+"| T="+str(temper)+".csv"
-    # with open(name, "w+") as f:
-    #     row_writer=csv.writer(f,delimiter=',')
-    #     try:
-    #         for i in range(len(x)):
-    #             row_writer.writerow([str(x[i]),str(y[i])])
-    #     except TypeError:
 
-    #             row_writer.writerow([str(x),str(y)])
-
+    #This commented portion takes the values attained and turns them into a csv file labeling what it is
+    # background.csvform("Al", "Li", phase_name, temper)
           
 
 # Format the plot
