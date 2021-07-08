@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from pycalphad import Database, calculate, variables as v
 from pycalphad.plot.utils import phase_legend
 import numpy as np
-
+import alphashape
 # Load database and choose the phases that will be plotted
 db_nbre = Database('Al-Li.tdb')
 my_phases_nbre = ['LIQUID','BCC_A2','FCC_A1','BCC_DIS','BCC_B2','AL2LI3','AL4LI9']
@@ -47,28 +47,31 @@ for phase_name in my_phases_nbre:
         #This portion of the code needs to be changed but all it does is get the hull of the gibbs surface
         if phase_name=='BCC_B2':
             minihull=[]
+            count=0
         for i in range(len(x)):
             app=[x[i],y[i]]
             if phase_name == 'BCC_B2':
-                minihull.append(app)
+                if i%150==0:
+                    count+=1
+                    minihull.append(app)
+                if count>=1200:
+                    break
             hullval.append(app)
         if phase_name=='BCC_B2':
             minihull=np.array(minihull)
-            liquidx=[]
-            liquidy=[]
-            lhull=ConvexHull(minihull)
-            for simplex in lhull.simplices:
-                liquidx.extend(minihull[simplex,0].tolist())
-                
-                liquidy.extend(minihull[simplex,1].tolist())
-            liquidx.extend(minihull[lhull.vertices,0].tolist())
-            liquidy.extend(minihull[lhull.vertices,1].tolist())
+            alpha = 0.95 * alphashape.optimizealpha(minihull)
+            print("optimized")
+            hull = alphashape.alphashape(minihull, alpha)
+            hull_pts = hull.exterior.coords.xy
 
-            x=liquidx
-            y=liquidy
+            x=hull_pts[0]
+            y=hull_pts[1]
         #From this point all the code makes a polynomial estimate of the specific phase curve 
         #then find the derivative
-        estimate=np.polyfit(x,y,8)
+        estimate=np.polyfit(x,y,3)
+        testx= [i for i in np.around(np.arange(0,1.0,.01),2)]
+        testy=np.polyval(estimate,testx)
+        plt.plot(testx,testy)
         derivative=background.find_derivative(estimate)
         alphapot=[]
         betapot=[]
@@ -97,7 +100,7 @@ ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.6))
 
 pplot=plt.figure(2)
 ax2=pplot.gca()
-phase='LIQUID'
+phase='BCC_A2'
 ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['alpha'],color='red')
 ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['beta'],color='blue')
 

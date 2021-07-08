@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from pycalphad import Database, calculate, variables as v
 from pycalphad.plot.utils import phase_legend
 import numpy as np
+import alphashape
 
 # Load database and choose the phases that will be plotted
 db_nbre = Database('Mg-Bi.tdb')
