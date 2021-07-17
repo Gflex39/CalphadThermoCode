@@ -113,23 +113,68 @@ def potfinder(temper,plot):
         plt.show()
     return phase_potentials
 temps=[]
-pots=[]
+pots1=[]
+pots2=[]
+pots3=[]
+pots4=[]
 
-for i in range(630,670):
+for i in range(1090,1110):
+    check1=True
+    check2=True
+    check3=True
+    check4=True
     temps.append(i)
     curr=potfinder(i, False)
     minimum=min(curr['LIQUID']['x'])
     for j in range(len(curr['LIQUID']['x'])):
-        if curr['LIQUID']['x'][j]==minimum:
-            if i==650:
-                Gibb=curr['LIQUID']['alpha'][j]
-            pots.append(curr['LIQUID']['alpha'][j])
-            break
-potestimate=np.polyfit(temps,pots,4)
-potderivative=background.find_derivative(potestimate)
-entropy=potderivative(650)
-enthalpy=Gibb+entropy*650
-print("Enthalpy="+str(enthalpy))
-print("Entropy="+str(entropy))
+        if curr['LIQUID']['x'][j]==minimum and check1:
+            if i==1100:
+                Gibb1=curr['LIQUID']['alpha'][j]
+            pots1.append(curr['LIQUID']['alpha'][j])
+            check1=False
+        if abs(curr['LIQUID']['x'][j]-.25)<.01 and check2:
+            if i==1100:
+                Gibb2=curr['LIQUID']['alpha'][j]
+            pots2.append(curr['LIQUID']['alpha'][j])
+            check2=False
+        if abs(curr['LIQUID']['x'][j]-.5)<.01 and check3:
+            if i==1100:
+                Gibb3=curr['LIQUID']['alpha'][j]
+            pots3.append(curr['LIQUID']['alpha'][j])
+            check3=False
+        if abs(curr['LIQUID']['x'][j]-.75)<.01 and check4:
+            if i==1100:
+                Gibb4=curr['LIQUID']['alpha'][j]
+            pots4.append(curr['LIQUID']['alpha'][j])
+            check4=False
+            
+potestimate1=np.polyfit(temps,pots1,4)
+potderivative1=background.find_derivative(potestimate1)
+entropy1=-potderivative1(1100)
+enthalpy1=Gibb1+entropy1*1100
+print("Enthalpy at 0="+str(enthalpy1))
+print("Entropy at 0="+str(entropy1))
+
+potestimate2=np.polyfit(temps,pots2,4)
+potderivative2=background.find_derivative(potestimate2)
+entropy2=-potderivative2(1100)
+enthalpy2=Gibb1+entropy2*1100
+print("Enthalpy at .25="+str(enthalpy2))
+print("Entropy at .25="+str(entropy2))
+
+potestimate3=np.polyfit(temps,pots3,4)
+potderivative3=background.find_derivative(potestimate3)
+entropy3=-potderivative3(1100)
+enthalpy3=Gibb1+entropy3*1100
+print("Enthalpy at .5="+str(enthalpy3))
+print("Entropy at .5="+str(entropy3))
+
+potestimate4=np.polyfit(temps,pots4,4)
+potderivative4=background.find_derivative(potestimate4)
+entropy4=-potderivative4(1100)
+enthalpy4=Gibb1+entropy4*1100
+print("Enthalpy at .75="+str(enthalpy4))
+print("Entropy at .75="+str(entropy4))
+
 
 

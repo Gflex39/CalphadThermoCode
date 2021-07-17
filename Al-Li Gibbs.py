@@ -57,14 +57,14 @@ def potfinder(temper,plot):
             for i in range(len(x)):
                 app=[x[i],y[i]]
                 if phase_name == 'BCC_B2':
-                    if i%150==0:
+                    if i%400==0:
                         if x[i] not in hullx:
                             count+=1
                             minihull.append(app)
 
                             hullx.append(x[i])
                             hully.append(y[i])
-                    if count>=400:
+                    if count>=100:
                         break
                 hullval.append(app)
             if phase_name=='BCC_B2':
@@ -148,7 +148,7 @@ for i in range(1216,1226):
             break
 potestimate=np.polyfit(temps,pots,4)
 potderivative=background.find_derivative(potestimate)
-entropy=potderivative(1221)
+entropy=-potderivative(1221)
 enthalpy=Gibb+entropy*1221
 print("Enthalpy="+str(enthalpy))
 print("Entropy="+str(entropy))
