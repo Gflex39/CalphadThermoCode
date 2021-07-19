@@ -46,50 +46,33 @@ def potfinder(temper,plot):
         #Here the (x,y) pairs of points are but into a more simple and callable form
         #We use a try except case here because one of the phases has only one data point. Meaning when
         #try to ge the length it gives a type eror
+        if phase_name=='BCC_B2':
+            newx=[]
+            newy=[]
+            for i in np.around(np.arange(0,1,.01),2):
+                lowx=[]
+                lowy=[]
+                
+                for j in range(len(x)):
+                    if abs(x[j]-i)<0.001:
+                        lowx.append(x[j])
+                        lowy.append(y[j])
+                bot=min(lowy)
+                newx.append(i)
+                newy.append(bot)
+            x=newx
+            y=newy
+                
+
         try:
             #This portion of the code needs to be changed but all it does is get the hull of the gibbs surface
-            if phase_name=='BCC_B2':
-                minihull=[]
-                hullx=[]
-                hully=[]
-                count=0
-                
             for i in range(len(x)):
                 app=[x[i],y[i]]
-                if phase_name == 'BCC_B2':
-                    if i%400==0:
-                        if x[i] not in hullx:
-                            count+=1
-                            minihull.append(app)
-
-                            hullx.append(x[i])
-                            hully.append(y[i])
-                    if count>=100:
-                        break
                 hullval.append(app)
-            if phase_name=='BCC_B2':
-                minihull=np.array(minihull)
-                alpha = 0.95 * alphashape.optimizealpha(minihull)
-                print("optimized")
-                hull = alphashape.alphashape(minihull, alpha)
-                hull_pts = hull.exterior.coords.xy
-                
-                x=hull_pts[0]
-                y=hull_pts[1]
+
             #From this point all the code makes a polynomial estimate of the specific phase curve 
             #then find the derivative
-            if phase_name=='BCC_B2':
-                x, y = zip(*sorted(zip(x, y)))
-                f = interp1d(x, y)
-                estimate=np.polyfit(testx,f(testx),8)
-                testy=np.polyval(estimate,testx)
-                print(len(testx))
-                print(len(testy))
-                plt.plot(testx,testy, color=color_dict[phase_name],linewidth=4)
-            else:
-                estimate=np.polyfit(x,y,3)
-            # testy=np.polyval(estimate,testx)
-            # plt.plot(testx,testy)
+            estimate=np.polyfit(x,y,8)
             derivative=background.find_derivative(estimate)
             alphapot=[]
             betapot=[]
@@ -99,14 +82,12 @@ def potfinder(temper,plot):
                 potential=background.find_potentials(slope, x[i], y[i], True)
                 alphapot.append(potential[0])
                 betapot.append(potential[1])
-            print(len(x))
             phase_potentials[phase_name]={'alpha':alphapot,'beta':betapot,'x':x}
         except TypeError:
             print("We good")
         #The points are the plotted
         if plot:
-            if phase_name!='BCC_B2':
-                ax.scatter(x,y, marker='.', s=5, color=color_dict[phase_name])
+            ax.scatter(x,y, marker='.', s=5, color=color_dict[phase_name])
 
         #This commented portion takes the values attained and turns them into a csv file labeling what it is
         # background.csvform("Al", "Li", phase_name, temper)
@@ -114,6 +95,17 @@ def potfinder(temper,plot):
 
     # Format the plot
     if plot:
+ 
+        #This commented portion takes the values attained and turns them into a csv file labeling what it is
+        # background.csvform("Mg", "Bi", phase_name, temper)
+        #This finds the convex hull of the plot
+        # hullval=np.array(hullval)
+        # hull = ConvexHull(hullval)
+        # plt.plot(hullval[:][0], hullval[:][1], 'o')
+        #for simplex in hull.simplices:
+            #plt.plot(hullval[simplex,0], hullval[simplex,1], 'k-')
+        #plt.plot(hullval[hull.vertices,0], hullval[hull.vertices,1], 'r--', lw=2)
+        #plt.plot(hullval[hull.vertices[0],0], hullval[hull.vertices[0],1], 'ro')
         ax.set_xlabel('X(Li)')
         ax.set_ylabel('GM')
         ax.set_xlim((0, 1))
@@ -138,7 +130,7 @@ pots=[]
 
 for i in range(1216,1226):
     temps.append(i)
-    curr=potfinder(i, False)
+    curr=potfinder(i, True)
     minimum=min(curr['LIQUID']['x'])
     for j in range(len(curr['LIQUID']['x'])):
         if curr['LIQUID']['x'][j]==minimum:

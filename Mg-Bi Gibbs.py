@@ -41,25 +41,28 @@ def potfinder(temper,plot):
         x = tempx.squeeze()     
         y = temp.squeeze()
 
+        if phase_name=='LIQUID':
+            newx=[]
+            newy=[]
+            for i in np.around(np.arange(0,1,.01),2):
+                lowx=[]
+                lowy=[]
+                
+                for j in range(len(x)):
+                    if abs(x[j]-i)<0.001:
+                        lowx.append(x[j])
+                        lowy.append(y[j])
+                bot=min(lowy)
+                newx.append(i)
+                newy.append(bot)
+            x=newx
+            y=newy
+
         #Here the (x,y) pairs of points are but into a more simple and callable form
         #This portion of the code needs to be changed but all it does is get the hull of the gibbs surface
-        if phase_name=='LIQUID':
-            minihull=[]
         for i in range(len(x)):
             app=[x[i],y[i]]
-            if phase_name == 'LIQUID':
-                minihull.append(app)
             hullval.append(app)
-        if phase_name=='LIQUID':
-            minihull=np.array(minihull)
-            liquidx=[]
-            liquidy=[]
-            lhull=ConvexHull(minihull)
-            for simplex in lhull.simplices:
-                liquidx.extend(minihull[simplex,0].tolist())
-                liquidy.extend(minihull[simplex,1].tolist())
-            x=liquidx
-            y=liquidy
         #From this point all the code makes a polynomial estimate of the specific phase curve 
         #then find the derivative
         estimate=np.polyfit(x,y,8)
@@ -93,7 +96,6 @@ def potfinder(temper,plot):
         #plt.plot(hullval[hull.vertices,0], hullval[hull.vertices,1], 'r--', lw=2)
         #plt.plot(hullval[hull.vertices[0],0], hullval[hull.vertices[0],1], 'ro')
 
-        # plt.show()
         # Format the plot
         ax.set_xlabel('X(Mg)')
         ax.set_ylabel('GM')
@@ -124,7 +126,7 @@ for i in range(1090,1110):
     check3=True
     check4=True
     temps.append(i)
-    curr=potfinder(i, False)
+    curr=potfinder(i, True)
     minimum=min(curr['LIQUID']['x'])
     for j in range(len(curr['LIQUID']['x'])):
         if curr['LIQUID']['x'][j]==minimum and check1:
