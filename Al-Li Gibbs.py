@@ -130,7 +130,7 @@ pots=[]
 
 for i in range(1216,1226):
     temps.append(i)
-    curr=potfinder(i, True)
+    curr=potfinder(i, False)
     minimum=min(curr['LIQUID']['x'])
     for j in range(len(curr['LIQUID']['x'])):
         if curr['LIQUID']['x'][j]==minimum:

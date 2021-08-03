@@ -44,12 +44,12 @@ def potfinder(temper,plot):
         if phase_name=='LIQUID':
             newx=[]
             newy=[]
-            for i in np.around(np.arange(0,1,.01),2):
+            for i in np.around(np.arange(0,1,.05),3):
                 lowx=[]
                 lowy=[]
                 
                 for j in range(len(x)):
-                    if abs(x[j]-i)<0.001:
+                    if abs(x[j]-i)<0.0005:
                         lowx.append(x[j])
                         lowy.append(y[j])
                 bot=min(lowy)
@@ -80,7 +80,11 @@ def potfinder(temper,plot):
         
     
         if plot:
-            ax.scatter(x,y, marker='.', s=5, color=color_dict[phase_name])
+            if phase_name!='LIQUID':
+                ax.scatter(x,y, marker='.', s=5, color=color_dict[phase_name])
+            else:
+                plt.plot(x,y,color=color_dict[phase_name])
+
 
     if plot:    
             #This commented portion takes the values attained and turns them into a csv file labeling what it is
@@ -96,9 +100,10 @@ def potfinder(temper,plot):
         #plt.plot(hullval[hull.vertices,0], hullval[hull.vertices,1], 'r--', lw=2)
         #plt.plot(hullval[hull.vertices[0],0], hullval[hull.vertices[0],1], 'ro')
 
-        # Format the plot
-        ax.set_xlabel('X(Mg)')
-        ax.set_ylabel('GM')
+        # Format the plot   
+        ax.set_xlabel('Mole Percent of Mg',fontsize=16)
+        ax.set_ylabel('Molar Gibbs Energy',fontsize=16)
+        ax.set_title(' Molar Gibbs Energy of Mg-Bi System at '+str(temper)+"\xb0"+" K")
         ax.set_xlim((0, 1))
         ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.6))
 
@@ -108,11 +113,11 @@ def potfinder(temper,plot):
         ax2.set_xlabel('Mole Percent of Mg',fontsize=16)
         ax2.set_ylabel('Chemical Potential')
         ax2.set_title('Chemical Potential of the '+phase+' phase at '+str(temper)+" K")
-        ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['alpha'],color='red',label='Pure Mg potential')
-        ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['beta'],color='blue',label='Pure Bi potential')
+        ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['alpha'],color='red',label='Potential of pure Mg ')
+        ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['beta'],color='blue',label='Potential of pure Bi')
         ax2.legend(loc='best', scatterpoints=100)
 
-        plt.show()
+        
     return phase_potentials
 temps=[]
 pots1=[]
@@ -120,63 +125,67 @@ pots2=[]
 pots3=[]
 pots4=[]
 
-for i in range(1090,1110):
+for i in range(539,549):
     check1=True
     check2=True
     check3=True
     check4=True
     temps.append(i)
-    curr=potfinder(i, True)
+    plot=False
+    if i == 544:
+        plot=True
+    curr=potfinder(i, plot)
     minimum=min(curr['LIQUID']['x'])
     for j in range(len(curr['LIQUID']['x'])):
         if curr['LIQUID']['x'][j]==minimum and check1:
-            if i==1100:
+            if i==544:
                 Gibb1=curr['LIQUID']['alpha'][j]
             pots1.append(curr['LIQUID']['alpha'][j])
             check1=False
         if abs(curr['LIQUID']['x'][j]-.25)<.01 and check2:
-            if i==1100:
+            if i==544:
                 Gibb2=curr['LIQUID']['alpha'][j]
             pots2.append(curr['LIQUID']['alpha'][j])
             check2=False
         if abs(curr['LIQUID']['x'][j]-.5)<.01 and check3:
-            if i==1100:
+            if i==544:
                 Gibb3=curr['LIQUID']['alpha'][j]
             pots3.append(curr['LIQUID']['alpha'][j])
             check3=False
         if abs(curr['LIQUID']['x'][j]-.75)<.01 and check4:
-            if i==1100:
+            if i==544:
                 Gibb4=curr['LIQUID']['alpha'][j]
             pots4.append(curr['LIQUID']['alpha'][j])
             check4=False
             
 potestimate1=np.polyfit(temps,pots1,4)
 potderivative1=background.find_derivative(potestimate1)
-entropy1=-potderivative1(1100)
-enthalpy1=Gibb1+entropy1*1100
+entropy1=-potderivative1(544)
+enthalpy1=Gibb1+entropy1*544
 print("Enthalpy at 0="+str(enthalpy1))
 print("Entropy at 0="+str(entropy1))
 
 potestimate2=np.polyfit(temps,pots2,4)
 potderivative2=background.find_derivative(potestimate2)
-entropy2=-potderivative2(1100)
-enthalpy2=Gibb1+entropy2*1100
+entropy2=-potderivative2(544)
+enthalpy2=Gibb1+entropy2*544
 print("Enthalpy at .25="+str(enthalpy2))
 print("Entropy at .25="+str(entropy2))
 
 potestimate3=np.polyfit(temps,pots3,4)
 potderivative3=background.find_derivative(potestimate3)
-entropy3=-potderivative3(1100)
-enthalpy3=Gibb1+entropy3*1100
+entropy3=-potderivative3(544)
+enthalpy3=Gibb1+entropy3*544
 print("Enthalpy at .5="+str(enthalpy3))
 print("Entropy at .5="+str(entropy3))
 
 potestimate4=np.polyfit(temps,pots4,4)
 potderivative4=background.find_derivative(potestimate4)
-entropy4=-potderivative4(1100)
-enthalpy4=Gibb1+entropy4*1100
+entropy4=-potderivative4(544)
+enthalpy4=Gibb1+entropy4*544
 print("Enthalpy at .75="+str(enthalpy4))
 print("Entropy at .75="+str(entropy4))
 
+plt.show()
 
 

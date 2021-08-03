@@ -22,5 +22,6 @@ axes = fig.gca()
 
 # Plot the phase diagram on the existing axes using the `plot_kwargs={'ax': axes}` keyword argument
 binplot(db_nbre, ['MG', 'BI','VA'] , my_phases_nbre, {v.X('MG'): (0,1,0.01), v.T: (300, 1200, 20), v.P:101325}, plot_kwargs={'ax': axes})
-
+axes.set_title("Phase diagram of Mg-Bi System", fontsize=16)
+axes.set_xlabel("X(Mg)")
 plt.show()
