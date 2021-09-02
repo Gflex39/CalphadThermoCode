@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from pycalphad import Database, calculate, variables as v
 from pycalphad.plot.utils import phase_legend
 import numpy as np
+import mpmath as mp
 #This file is just a dump for the functions used for all of the Gibbs curve files.
 def line(m,x,y,comp):
     val=m*(comp-x)+y
@@ -42,3 +43,9 @@ def csvform(e1,e2,phase_name,temper):
         except TypeError:
 
                 row_writer.writerow([str(x),str(y)])
+def ideal_entropy(x):
+    return mp.fmul(-8.314,(mp.fmul(x,mp.log(x))+mp.fmul((1-x),mp.log((1-x)))))
+def ideal_gibbs(x,t):
+    return mp.fmul(mp.fmul(8.314,(mp.fmul(x,mp.log(x))+mp.fmul((1-x),mp.log((1-x))))),t)
+
+
