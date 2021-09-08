@@ -25,9 +25,8 @@ def potfinder(temper,plot):
     # Get the colors that map phase names to colors in the legend
     legend_handles, color_dict = phase_legend(my_phases_nbre)
 
-    fig = plt.figure(figsize=(9,6))
+    fig = plt.figure(num=1,figsize=(9,6))
     ax = fig.gca()
-    DataValues=[]
     df = pd.DataFrame(list())
     phase_potentials={}
     hullval=[]
@@ -54,7 +53,7 @@ def potfinder(temper,plot):
                 lowy=[]
                 
                 for j in range(len(x)):
-                    if abs(x[j]-i)<0.001:
+                    if abs(x[j]-i)<0.007:
                         lowx.append(x[j])
                         lowy.append(y[j])
                 bot=min(lowy)
@@ -87,7 +86,10 @@ def potfinder(temper,plot):
             print("We good")
         #The points are the plotted
         if plot:
-            ax.scatter(x,y, marker='.', s=5, color=color_dict[phase_name])
+            if phase_name=='BCC_B2':
+                plt.plot(x,y,color=color_dict[phase_name])
+            else:
+                ax.scatter(x,y, marker='.', s=5, color=color_dict[phase_name])
 
         #This commented portion takes the values attained and turns them into a csv file labeling what it is
         # background.csvform("Al", "Li", phase_name, temper)
@@ -106,8 +108,9 @@ def potfinder(temper,plot):
             #plt.plot(hullval[simplex,0], hullval[simplex,1], 'k-')
         #plt.plot(hullval[hull.vertices,0], hullval[hull.vertices,1], 'r--', lw=2)
         #plt.plot(hullval[hull.vertices[0],0], hullval[hull.vertices[0],1], 'ro')
-        ax.set_xlabel('X(Li)')
-        ax.set_ylabel('GM')
+        ax.set_xlabel('Mole Percent of Lithium',fontsize=16)
+        ax.set_ylabel('Molar Gibbs Energy (J/mol)',fontsize=16)
+        ax.set_title(' Molar Gibbs Energy of Al-Li System at '+str(temper)+"\xb0"+" K")
         ax.set_xlim((0, 1))
         ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.6))
 
@@ -115,22 +118,24 @@ def potfinder(temper,plot):
         ax2=pplot.gca()
         phase='BCC_A2'
 
-        ax2.set_xlabel('Mole Percent of Li',fontsize=16)
-        ax2.set_ylabel('Chemical Potential')
-        ax2.set_title('Chemical Potential of the '+phase+' phase at '+str(temper)+" K")
-        ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['alpha'],color='red',label='Pure Al potential')
-        ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['beta'],color='blue',label='Pure Li potential')
+        ax2.set_xlabel('Mole Percent of Lithium',fontsize=20)
+        ax2.set_ylabel('Chemical Potential (J/mol)',fontsize=20)
+        ax2.set_title('Chemical Potential of the '+phase+' phase at '+str(temper)+" K",fontsize=25)
+        ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['alpha'],color='red',label='Potential of pure Aluminum')
+        ax2.scatter(phase_potentials[phase]['x'],phase_potentials[phase]['beta'],color='blue',label='Potential of pure Lithium ')
         ax2.legend(loc='best', scatterpoints=100)
 
-        plt.show()
     return phase_potentials
 
 temps=[]
 pots=[]
 
 for i in range(1216,1226):
+    plot=False
+    if i == 1221:
+        plot=True
     temps.append(i)
-    curr=potfinder(i, False)
+    curr=potfinder(i, plot)
     minimum=min(curr['LIQUID']['x'])
     for j in range(len(curr['LIQUID']['x'])):
         if curr['LIQUID']['x'][j]==minimum:
@@ -144,3 +149,4 @@ entropy=-potderivative(1221)
 enthalpy=Gibb+entropy*1221
 print("Enthalpy="+str(enthalpy))
 print("Entropy="+str(entropy))
+plt.show()

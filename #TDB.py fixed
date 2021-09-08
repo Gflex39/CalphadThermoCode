@@ -1,19 +1,18 @@
 #TDB
 import background
 from scipy.spatial import ConvexHull, convex_hull_plot_2d
-import os
-import csv
 import matplotlib.pyplot as plt
 from pycalphad import Database, calculate, variables as v
 from pycalphad.plot.utils import phase_legend
 import numpy as np
-import alphashape
+
 import mendeleev as me
 class tdb:
-    def __init__(self,filename,comps,temp,surfaces,phases):
+    def __init__(self,filename,comps,temp,surfaces,phases,full=True):
         self.hullval=[]
         self.filename=filename
         self.comps=comps
+        self.comps1=comps
         self.temp=temp
         self.surfaces=surfaces
         self.phases=phases
@@ -44,7 +43,7 @@ class tdb:
             
             self.temps.append(i)
             plot=False
-            if i == temp:
+            if i == temp and full:
                 plot=True
             
             self.curr=self.potfinder(i, plot)
@@ -60,25 +59,23 @@ class tdb:
                         self.vals[k].append(self.curr['LIQUID']['y'][j])
                         self.check[k]=False
 
-            
-        self.potestimate=[]
-        self.potderivative=[]
-        self.entropy=[]
-        self.enthalpy=[]
-        self.Igibb=[background.ideal_gibbs(i, self.temp) for i in self.easy]
-        for i in range(len(self.Igibb)):
-            print([self.easy[i],self.Igibb[i]])
-        self.Ientropy=[background.ideal_entropy(i) for i in self.easy]
-        self.Egibb=[]
-        self.Eentropy=[]
+        if full:   
+            self.potestimate=[]
+            self.potderivative=[]
+            self.entropy=[]
+            self.enthalpy=[]
+            self.Igibb=[background.ideal_gibbs(i, self.temp) for i in self.easy]
+            for i in range(len(self.Igibb)):
+                print([self.easy[i],self.Igibb[i]])
+            self.Ientropy=[background.ideal_entropy(i) for i in self.easy]
+            self.Egibb=[]
+            self.Eentropy=[]
+            for i in range(len(self.easy)):
+                self.potestimate.append(np.polyfit(self.temps,self.vals[i],4))
+                self.potderivative.append(background.find_derivative(self.potestimate[-1]))
+                self.entropy.append(-self.potderivative[-1](temp))
+                self.enthalpy.append(self.Gibbs[i]+self.entropy[-1]*temp)
 
-        for i in range(len(self.easy)):
-            self.potestimate.append(np.polyfit(self.temps,self.vals[i],4))
-            self.potderivative.append(background.find_derivative(self.potestimate[-1]))
-            self.entropy.append(-self.potderivative[-1](temp))
-            self.enthalpy.append(self.Gibbs[i]+self.entropy[-1]*temp)
-            self.Egibb.append(self.Gibbs[i]-self.Igibb[i])
-            self.Eentropy.append(self.entropy[i]-self.Ientropy[i])
         
         #This commented portion takes the values attained and turns them into a csv file labeling what it is
         # background.csvform("Mg", "Bi", phase_name, temper)
@@ -100,7 +97,7 @@ class tdb:
         my_phases_nbre = self.phases
 
         # Get the colors that map phase names to colors in the legend
-        legend_handles, color_dict = phase_legend(my_phases_nbre)
+        self.legend_handles, self.color_dict = phase_legend(my_phases_nbre)
         fig = plt.figure(num=1,figsize=(9,6))
         ax = fig.gca()
 
@@ -166,9 +163,9 @@ class tdb:
         
             if plot:
                 if phase_name not in self.surfaces:
-                    ax.scatter(x,y, marker='.', s=5, color=color_dict[phase_name])
+                    ax.scatter(x,y, marker='.', s=5, color=self.color_dict[phase_name])
                 else:
-                    plt.plot(x,y,color=color_dict[phase_name])
+                    plt.plot(x,y,color=self.color_dict[phase_name])
    
 
 
@@ -178,7 +175,7 @@ class tdb:
                     ax.set_ylabel('Molar Gibbs Energy (J/mol)',fontsize=16)
                     ax.set_title(' Molar Gibbs Energy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(temper)+"\xb0"+" K")
                     ax.set_xlim((0, 1))
-                    ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.6))
+                    ax.legend(handles=self.legend_handles, loc='center left', bbox_to_anchor=(1, 0.6))
 
                     pplot=plt.figure(2)
                     ax2=pplot.gca()
@@ -204,51 +201,66 @@ class tdb:
             enthalpymix.append(self.enthalpy[i]-(self.easy[i]*self.enthalpy[-1]+(1-self.easy[i])*self.enthalpy[0]))
             # print(str(enthalpy[i])+"-"+(str(easy[i])+"*"+str(enthalpy[-1])+"+"+(str(1-easy[i]))+"*"+str(enthalpy[0]))+" = "+str(enthalpy[i]-(easy[i]*enthalpy[-1]+(1-easy[i])*enthalpy[0])))
             gibbmix.append(self.Gibbs[i]-(self.easy[i]*self.Gibbs[-1]+(1-self.easy[i])*self.Gibbs[0]))
+            self.Egibb.append(gibbmix[i]-self.Igibb[i])
+            self.Eentropy.append(entropymix[i]-self.Ientropy[i])
         
         mplot=plt.figure(3)
         ax3=mplot.gca()
         if name=='Entropy':
-            ax3.scatter(self.easy,self.entropy)
+            plt.plot(self.easy,self.entropy)
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
             ax3.set_ylabel('Molar Entropy (J/K)',fontsize=16)
             ax3.set_title(' Molar Entropy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
             ax3.set_xlim((0, 1))
         elif name=='GibbsM':
-            ax3.scatter(self.easy,gibbmix)
+            plt.plot(self.easy,gibbmix)
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
             ax3.set_ylabel('Molar Gibbs Energy of Mixing (J)',fontsize=16)
             ax3.set_title(' Molar Gibbs Energy of Mixing of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
             ax3.set_xlim((0, 1))
         elif name=='Enthalpy':
-            ax3.scatter(self.easy,self.enthalpy)
+            plt.plot(self.easy,self.enthalpy)
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
             ax3.set_ylabel('Molar Enthalpy (J)',fontsize=16)
             ax3.set_title(' Molar Enthalpy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
             ax3.set_xlim((0, 1))
         elif name=='EntropyM':
-            ax3.scatter(self.easy,entropymix)
+            plt.plot(self.easy,entropymix)
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
             ax3.set_ylabel('Molar Entropy of Mixing (J/K)',fontsize=16)
             ax3.set_title(' Molar Entropy of Mixing of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
             ax3.set_xlim((0, 1))
         elif name=='EnthalpyM':
-            ax3.scatter(self.easy,enthalpymix)
+            plt.plot(self.easy,enthalpymix)
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
-            ax3.set_ylabel('Molar Enthalpy of Mixing (J/K)',fontsize=16)
+            ax3.set_ylabel('Molar Enthalpy of Mixing (J)',fontsize=16)
             ax3.set_title(' Molar Enthalpy of Mixing of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
             ax3.set_xlim((0, 1))
         elif name=='EntropyE':
-            ax3.scatter(self.easy,self.Eentropy)
+            plt.plot(self.easy,self.Eentropy)
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
-            ax3.set_ylabel('Molar Excess Entropy (J/K)',fontsize=16)
-            ax3.set_title(' Molar Excess Entropy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
+            ax3.set_ylabel('Excess Molar Entropy (J/K)',fontsize=16)
+            ax3.set_title('Excess Molar Entropy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
             ax3.set_xlim((0, 1))
         elif name=='GibbE':
-            ax3.scatter(self.easy,self.Egibb)
+            plt.plot(self.easy,self.Egibb)
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
-            ax3.set_ylabel('Molar Excess Gibbs Energy (J/K)',fontsize=16)
-            ax3.set_title(' Molar Excess Gibbs Energy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
+            ax3.set_ylabel('Excess Molar Gibbs Energy (J)',fontsize=16)
+            ax3.set_title('Excess Molar Gibbs Energy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
             ax3.set_xlim((0, 1))
+        elif name=='EntropyI':
+            plt.plot(self.easy,self.Ientropy)
+            ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
+            ax3.set_ylabel('Ideal Molar Entropy (J/K)',fontsize=16)
+            ax3.set_title('Ideal Molar Entropy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
+            ax3.set_xlim((0, 1))
+        elif name=='GibbI':
+            plt.plot(self.easy,self.Igibb)
+            ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
+            ax3.set_ylabel('Ideal Molar Gibbs Energy (J)',fontsize=16)
+            ax3.set_title('Ideal Molar Gibbs Energy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
+            ax3.set_xlim((0, 1))
+
         else:
             print("Dont have that data")
     def composition(self, comp):
@@ -263,9 +275,10 @@ class tdb:
                     mode=sides
                     modey=self.hullval[simplex,1]
                     print(mode)
+                    
             
             # print((self.hullval[simplex,0], self.hullval[simplex,1]))
-            plt.plot(self.hullval[simplex,0], self.hullval[simplex,1], 'k-')
+            # plt.plot(self.hullval[simplex,0], self.hullval[simplex,1], 'k-')
         for i in range(2):
             for j in self.act.keys():
 
@@ -277,11 +290,43 @@ class tdb:
             modey=[modey[1],modey[0]]
             phase=[phase[1],phase[0]]
         if phase[0]==phase[1]:
-            print("Completely: "+phase[0])
+            print(phase[0])
+            return phase[0]
         else:
             range_=mode[1]-mode[0]
             diff=comp-mode[0]
             print(str(np.round(diff/range_*100,2))+"% "+phase[0]+" and "+str(np.round((1-diff/range_)*100,2))+"% "+phase[1])
+            return None
+    def phase_diagram(self):
+        points=[]
+        layers=[]
+        for i in np.arange(self.temp-30,self.temp+30,1):
+
+            layers.append(tdb(self.filename,self.comps1,i,self.surfaces,self.phases,False))
+        for i in range(len(layers)):
+            # print(i)
+            # print("#####################################################################################")
+            for j in self.easy[1:-1]:
+                print(self.temp-30+i)
+                print(j)
+                print("*******************************************************************************")
+                points.append([j,self.temp-30+i,layers[i].composition(j)])
+        lplot=plt.figure(4)
+        ax4=lplot.gca()
+        for i in points:
+            if i[2] in self.color_dict.keys():
+                ax4.scatter(i[0],i[1],color=self.color_dict[i[2]])
+            else:
+                ax4.scatter(i[0],i[1],color='hotpink')
+        ax4.legend(handles=self.legend_handles, loc='center left', bbox_to_anchor=(1, 0.6))
+        ax4.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
+        ax4.set_ylabel('Temperature (K)',fontsize=16)
+        ax4.set_title(' Phase Diagram of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
+        ax4.set_xlim((0, 1))
+
+        
+
+            
 
 
 
@@ -299,11 +344,11 @@ class tdb:
 
 
 # AlLi=tdb('Al-Li.tdb',['Al', 'Li','VA'],1250,['BCC_B2'],['LIQUID','BCC_A2','FCC_A1','BCC_DIS','BCC_B2','AL2LI3','AL4LI9'])
-# CuNi=tdb('Cu-Ni.tdb',['Cu', 'Ni','CU%','VA%','NI%'],1570,[],['LIQUID','FCC_A1'])
-
-# tdb('Ca-Na.tdb',['Ca','Na','VA'],1500,[],['LIQUID','FCC_A1','BCC_A2','HCP_A3'])
+CuNi=tdb('Cu-Ni.tdb',['Cu', 'Ni','CU%','VA%','NI%'],1530,[],['LIQUID','FCC_A1'])
+#CaNa=tdb('Ca-Na.tdb',['Ca','Na','VA'],1500,[],['LIQUID','FCC_A1','BCC_A2','HCP_A3'])
 # MgBi=tdb('Mg-Bi.tdb',['Bi','Mg','VA'],673,['LIQUID'],['LIQUID', 'BI2MG3_H', 'BI2MG3_L'])
-# MgBi.graphdata('GibbE')
-# tdb('Ba-Ga.tdb',['Ba','Ga', 'VA'],1200,[],["LIQUID","BCC","ORTHO","BA10GA","BA8GA7","BAGA2","BAGA4","BA5GA6"])
-# MgBi.composition(.8)
+CuNi.graphdata('EnthalpyM')
+# BaGa=tdb('Ba-Ga.tdb',['Ba','Ga', 'VA'],1200,[],["LIQUID","BCC","ORTHO","BA10GA","BA8GA7","BAGA2","BAGA4","BA5GA6"])
+# CuNi.composition(.4)
+# CuNi.phase_diagram()
 plt.show()
