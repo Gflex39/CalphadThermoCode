@@ -1,0 +1,197 @@
+import background
+from symfit import Poly, variables, parameters, Model, Fit
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+new={}
+for i in range(10):
+    new[i*10+1303]=background.checkdata("Iron", "Nickel Entropy", "FCC4",1303+10*i)
+
+x, y, z = variables('x, y, z')
+c1, c2,c3,c4,c5,c6 = parameters('c1,c2,c3,c4,c5,c6')
+# Make a polynomial. Note the `as_expr` to make it symfit friendly.
+model_dict = {
+    z: Poly( {(2, 0): c1, (0, 1): c3, (1,0):c2}, x ,y).as_expr()
+}
+#  (1, 1): c4,(1, 0): c2,(0, 1): c5,(3, 0): c6
+model = Model(model_dict)
+print(model)
+# print(Poly( {(2, 0): c1, (0, 2): c1, (1, 1): c2}, x ,y).as_expr())
+# Generate example data
+xdata=[]
+ydata=[]
+zdata=[]
+for i in new:
+    xdata.append(new[i]['x'])
+    ydata.append(new[i]['temp'])
+    zdata.append(new[i]['y'])
+    
+
+# Perform the fit
+fit = Fit(model, x=xdata, y=ydata, z=zdata)
+fit_result = fit.execute()
+print(fit_result)
+# [z(x, y; c1, c2, c3) = c1*x**2 + c2*x + c3*y]
+#CU-NI LIQUID
+
+# Parameter Value        Standard Deviation
+# c1        -2.066693e+01 1.874625e-01
+# c2        2.068247e+01 1.941310e-01
+# c3        2.640117e-04 2.333075e-05
+# Status message         Optimization terminated successfully.
+# Number of iterations   8
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7f99833d36d0>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7f99833d3670>
+
+# Goodness of fit qualifiers:
+# chi_squared            10.208853383328222
+# objective_value        5.104426691664111
+# r_squared              0.9832338646848455
+
+#CU-Ni FCC_A1
+# Parameter Value        Standard Deviation
+# c1        -1.855631e+01 1.869611e-01
+# c2        1.860769e+01 1.935639e-01
+# c3        3.770949e-04 3.493028e-05
+# Status message         Optimization terminated successfully.
+# Number of iterations   12
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7faeaa3d6580>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7faeaa3d6520>
+
+# Goodness of fit qualifiers:
+# chi_squared            10.166527074748625
+# objective_value        5.083263537374313
+# r_squared              0.9793622715137594
+
+#Fe-Co LIQUID
+# Parameter Value        Standard Deviation
+# c1        -2.188184e+01 1.825176e-01
+# c2        2.172543e+01 1.890130e-01
+# c3        2.935656e-04 2.186351e-05
+# Status message         Optimization terminated successfully.
+# Number of iterations   8
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7fbf193d5610>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7fbf193d55b0>
+
+# Goodness of fit qualifiers:
+# chi_squared            9.676696928086336
+# objective_value        4.838348464043168
+# r_squared              0.9857962140173661
+
+
+#Fe-Co FCC_A1
+# Parameter Value        Standard Deviation
+# c1        -2.450164e+01 1.901996e-01
+# c2        2.421188e+01 1.969422e-01
+# c3        3.985298e-04 2.995625e-05
+# Status message         Desired error not necessarily achieved due to precision loss.
+# Number of iterations   10
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7ff85ebc2460>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7ff85ebc2400>
+
+# Goodness of fit qualifiers:
+# chi_squared            10.515214790121474
+# objective_value        5.257607395060737
+# r_squared              0.9876413510892327
+
+#Fe-Co BCC_B2
+# [z(x, y; c1, c2, c3, c4) = c1*x**2 + c2*x + c3*y + c4*x**3]
+
+# Parameter Value        Standard Deviation
+# c1        -2.238680e+01 7.376677e-01
+# c2        1.264147e+01 3.125884e-01
+# c3        2.870169e-04 3.454010e-05
+# c4        9.690028e+00 4.846127e-01
+# Status message         Optimization terminated successfully.
+# Number of iterations   16
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7fb4b4ab78b0>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7fb4b4ab78e0>
+
+# Goodness of fit qualifiers:
+# chi_squared            4.723988370230321
+# objective_value        2.3619941851151607
+# r_squared              0.9586368410686986
+ 
+
+ #Fe-Cr Liquid
+#  [z(x, y; c1, c2, c3) = c1*x**2 + c2*x + c3*y]
+
+# Parameter Value        Standard Deviation
+# c1        -1.399185e+01 1.906791e-01
+# c2        1.389537e+01 1.974754e-01
+# c3        2.459858e-04 1.920842e-05
+# Status message         Optimization terminated successfully.
+# Number of iterations   8
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7fe49e3b8700>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7fe49e3b86a0>
+
+# Goodness of fit qualifiers:
+# chi_squared            10.558700817990992
+# objective_value        5.279350408995496
+# r_squared              0.9629676559731793
+
+#Fe-Cr BCC_A2
+# [z(x, y; c1, c2, c3) = c1*x**2 + c2*x + c3*y]
+
+# Parameter Value        Standard Deviation
+# c1        -3.255121e+01 1.906130e-01
+# c2        3.232145e+01 1.973702e-01
+# c3        4.267636e-04 3.002135e-05
+# Status message         Optimization terminated successfully.
+# Number of iterations   12
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7fd58dac35b0>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7fd58dac3550>
+
+# Goodness of fit qualifiers:
+# chi_squared            10.560969724300058
+# objective_value        5.280484862150029
+# r_squared              0.9929406678400465
+
+#Fe-Cr FCC_A1
+# Parameter Value        Standard Deviation
+# c1        -2.951802e+01 1.953947e-01
+# c2        2.931458e+01 2.023362e-01
+# c3        3.750060e-04 2.697524e-05
+# Status message         Optimization terminated successfully.
+# Number of iterations   9
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7f9454ab05e0>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7f9454ab0580>
+
+# Goodness of fit qualifiers:
+# chi_squared            11.093535797148508
+# objective_value        5.546767898574254
+# r_squared              0.9910035232847563
+
+#Fe-Ni LIQUID
+# [z(x, y; c1, c2, c3) = c1*x**2 + c2*x + c3*y]
+
+# Parameter Value        Standard Deviation
+# c1        -1.785028e+01 2.808897e-01
+# c2        1.845586e+01 2.908888e-01
+# c3        1.788305e-04 3.271836e-05
+# Status message         Optimization terminated successfully.
+# Number of iterations   11
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7fe022bce730>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7fe022bce6d0>
+
+# Goodness of fit qualifiers:
+# chi_squared            22.91754344869337
+# objective_value        11.458771724346684
+# r_squared              0.9519147586892703
+
+#FE-NI FCC4
+# Parameter Value        Standard Deviation
+# c1        -1.723828e+01 2.221233e-01
+# c2        1.793375e+01 2.299898e-01
+# c3        3.574465e-05 3.679789e-05
+# Status message         Optimization terminated successfully.
+# Number of iterations   8
+# Objective              <symfit.core.objectives.LeastSquares object at 0x7fd00f3c7610>
+# Minimizer              <symfit.core.minimizers.BFGS object at 0x7fd00f3c75b0>
+
+# Goodness of fit qualifiers:
+# chi_squared            14.343596352938004
+# objective_value        7.171798176469002
+# r_squared              0.9674305196322679
+

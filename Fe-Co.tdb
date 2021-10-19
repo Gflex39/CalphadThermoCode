@@ -1,0 +1,187 @@
+$ COFE
+$
+$ TDB-file for the thermodynamic assessment of the Co-Fe system
+$
+$--------------------------------------------------------------------------
+$ 2013.01.08
+$ 
+$ TDB file created by T.Abe, K.Hashimoto and Y.sawada
+$
+$ Particle Simulation and Thermodynamics Group, National Institute for 
+$ Materials Science. 1-2-1 Sengen, Tsukuba, Ibaraki 305-0047, Japan
+$ e-mail: abe.taichi @nims.go.jp
+$ Copyright (C) NIMS 2008
+$
+$
+$ PARAMETERS ARE TAKEN FROM 
+$  Ohnuma, I., Enoki, H., Ikeda, O., Kainuma, R., Ohtani, H., Sundman, B.,
+$  and Ishida, K. Acta Materialia  50  (2002) p.379
+$
+$--------------------------------------------------------------------------
+$ 2013.06.18
+$ Mistype
+$ FUNCTION GFEFCC   298.15
+$    -236.7+132.416*T-24.6643*T*LN(T)-3.75752E-3*T**2-0.058927E-6*T**3
+$    +77359*T**(-1);                                                     1811 Y
+$    -27097.3963+300.252559*T-46*T*LN(T)+2788.54E28*T**(-9);      6000 ! $Unary
+$ ==>
+$ FUNCTION GFEFCC   298.15
+$    -236.7+132.416*T-24.6643*T*LN(T)-3.75752E-3*T**2-0.058927E-6*T**3
+$    +77359*T**(-1);                                                     1811 Y
+$    -27097.3963+300.252559*T-46*T*LN(T)+2788.54E28*T**(-9);    6000 N ! $Unary
+$------------------------------------------------------------------------------
+$
+ ELEMENT /- 	ELECTRON_GAS 	0.0000E+00 0.0000E+00 0.0000E+00!
+ ELEMENT VA 	VACUUM 		0.0000E+00 0.0000E+00 0.0000E+00!
+ ELEMENT CO 	HCP_A3 		5.8933E+01 0.0000E+00 0.0000E+00!
+ ELEMENT FE 	BCC_A2 		5.5847E+01 4.4890E+03 2.7280E+01!
+ 
+$------------------------------------------------------------------------------
+$ PARAMETERS FOR LIQUID PHASE
+$------------------------------------------------------------------------------
+ FUNCTION GHSERCO  298.15
+    +310.241+133.36601*T-25.0861*T*LN(T)-2.654739E-3*T**2-0.17348E-6*T**3
+    +72527*T**(-1);                                                      1768 Y
+    -17197.666+253.28374*T-40.5*T*LN(T)+934.88E28*T**(-9);      6000 N ! $Unary
+    
+ FUNCTION GCOLIQ   298.15
+    +15395.278+124.434078*T-25.0861*T*LN(T)-2.654739E-3*T**2-0.17348E-6*T**3
+    +72527*T**(-1)-219.801E-23*T**7;                                     1768 Y
+    -846.61+243.599944*T-40.5*T*LN(T);                          6000 N ! $Unary
+    
+ FUNCTION GCOBCC   298.15
+    +3248.241+132.65221*T-25.0861*T*LN(T)-2.654739E-3*T**2-0.17348E-6*T**3
+    +72527*T**(-1);                                                      1768 Y
+    -14259.666+252.56994*T-40.5*T*LN(T)+934.88E28*T**(-9);      6000 N ! $Unary
+    
+ FUNCTION GCOFCC  298.15
+    +737.832+132.750762*T-25.0861*T*LN(T)-2.654739E-3*T**2-0.17348E-6*T**3
+    +72527*T**(-1);                                                      1768 Y
+    -16770.075+252.668487*T-40.5*T*LN(T)+934.88E28*T**(-9);     6000 N ! $Unary
+
+ FUNCTION GHSERFE  298.15
+    +1225.7+124.134*T-23.5143*T*LN(T)-4.39752E-3*T**2-0.058927E-6*T**3
+    +77359*T**(-1);                                                      1811 Y
+    -25383.581+299.31255*T-46*T*LN(T)+2296.03E28*T**(-9);       6000 N ! $Unary
+
+ FUNCTION GFELIQ   298.15
+    +13265.87+117.57557*T-23.5143*T*LN(T)-4.39752E-3*T**2-0.058927E-6*T**3
+    +77359*T**(-1)-367.516E-23*T**7;                                     1811 Y
+    -10838.83+291.302*T-46*T*LN(T);                             6000 N ! $Unary
+    
+ FUNCTION GFEFCC   298.15
+    -236.7+132.416*T-24.6643*T*LN(T)-3.75752E-3*T**2-0.058927E-6*T**3
+    +77359*T**(-1);                                                      1811 Y
+    -27097.3963+300.252559*T-46*T*LN(T)+2788.54E28*T**(-9);     6000 N ! $Unary
+    
+ FUNCTION GFEHCP   298.15
+    -2480.08+136.725*T-24.6643*T*LN(T)-3.75752E-3*T**2-0.058927E-6*T**3
+    +77359*T**(-1);                                                      1811 Y
+    -29340.776+304.561559*T-46*T*LN(T)+2788.54E28*T**(-9);      6000 N ! $Unary
+
+$------------------------------------------------------------------------------
+ TYPE_DEFINITION % SEQ *!
+ DEFINE_SYSTEM_DEFAULT ELEMENT 2 !
+ DEFAULT_COMMAND DEF_SYS_ELEMENT VA /- !
+
+$------------------------------------------------------------------------------
+$ PARAMETERS FOR LIQUID PHASE
+$------------------------------------------------------------------------------
+ PHASE LIQUID:L % 1 1.0 !
+  CONSTITUENT LIQUID:L :CO,FE : !
+  PARAMETER G(LIQUID,CO;0)    298.15    +GCOLIQ#;                      6000 N !
+  PARAMETER G(LIQUID,FE;0)    298.15    +GFELIQ#;                      6000 N !
+  PARAMETER G(LIQUID,CO,FE;0) 298.15    -9753.82;                      6000 N !
+  PARAMETER G(LIQUID,CO,FE;2) 298.15    +2757.96;                      6000 N !
+
+$------------------------------------------------------------------------------
+$ PARAMETERS FOR BCC PHASE
+$------------------------------------------------------------------------------
+$ THIS PHASE HAS A DISORDERED CONTRIBUTION FROM BCC_A2 
+ TYPE_DEFINITION ' GES A_P_D B2_BCC MAGNETIC -1.0 4.00000E-01 !
+ PHASE B2_BCC %'( 3 .5 .5 3 !
+  CONSTITUENT B2_BCC :CO,FE : CO,FE : VA : !
+  PARAMETER G(B2_BCC,CO:CO:VA;0)        298.15  0;                     6000 N !
+  PARAMETER TC(B2_BCC,CO:CO:VA;0)       298.15  0;                     6000 N !
+  PARAMETER BMAGN(B2_BCC,CO:CO:VA;0)    298.15  0;                     6000 N !
+  PARAMETER G(B2_BCC,FE:CO:VA;0)        298.15  -1621.23;              6000 N !
+  PARAMETER TC(B2_BCC,FE:CO:VA;0)       298.15  +370;                  6000 N !
+  PARAMETER BMAGN(B2_BCC,FE:CO:VA;0)    298.15  +.1;                   6000 N !
+  PARAMETER G(B2_BCC,CO:FE:VA;0)        298.15  -1621.23;              6000 N !
+  PARAMETER TC(B2_BCC,CO:FE:VA;0)       298.15  +370;                  6000 N !
+  PARAMETER BMAGN(B2_BCC,CO:FE:VA;0)    298.15  +.1;                   6000 N !
+  PARAMETER G(B2_BCC,FE:FE:VA;0)        298.15  0;                     6000 N !
+  PARAMETER TC(B2_BCC,FE:FE:VA;0)       298.15  0;                     6000 N !
+  PARAMETER BMAGN(B2_BCC,FE:FE:VA;0)    298.15  0;                     6000 N !
+  PARAMETER G(B2_BCC,CO,FE:CO:VA;0)     298.15  +1744.89;              6000 N !
+  PARAMETER G(B2_BCC,CO,FE:CO:VA;1)     298.15  -123.653;              6000 N !
+  PARAMETER TC(B2_BCC,CO,FE:CO:VA;0)    298.15  -370;                  6000 N !
+  PARAMETER BMAGN(B2_BCC,CO,FE:CO:VA;0) 298.15  -.1;                   6000 N !
+  PARAMETER G(B2_BCC,CO:CO,FE:VA;0)     298.15  +1744.89;              6000 N !
+  PARAMETER G(B2_BCC,CO:CO,FE:VA;1)     298.15  -123.653;              6000 N !
+  PARAMETER TC(B2_BCC,CO:CO,FE:VA;0)    298.15  -370;                  6000 N !
+  PARAMETER BMAGN(B2_BCC,CO:CO,FE:VA;0) 298.15  -.1;                   6000 N !
+  PARAMETER G(B2_BCC,FE:CO,FE:VA;0)     298.15  +1497.58;              6000 N !
+  PARAMETER G(B2_BCC,FE:CO,FE:VA;1)     298.15  -123.653;              6000 N !
+  PARAMETER TC(B2_BCC,FE:CO,FE:VA;0)    298.15  -370;                  6000 N !
+  PARAMETER BMAGN(B2_BCC,FE:CO,FE:VA;0) 298.15  -.1;                   6000 N !
+  PARAMETER G(B2_BCC,CO,FE:FE:VA;0)     298.15  +1497.58;              6000 N !
+  PARAMETER G(B2_BCC,CO,FE:FE:VA;1)     298.15  -123.653;              6000 N !
+  PARAMETER TC(B2_BCC,CO,FE:FE:VA;0)    298.15  -370;                  6000 N !
+  PARAMETER BMAGN(B2_BCC,CO,FE:FE:VA;0) 298.15  -.1;                   6000 N !
+  PARAMETER G(B2_BCC,CO,FE:CO,FE:VA;0)  298.15  -2.5290E+6*T**(-1);    6000 N !
+
+ TYPE_DEFINITION ( GES AMEND_PHASE_DESCRIPTION B2_BCC DIS_PART BCC_A2,,,!
+ TYPE_DEFINITION ) GES A_P_D BCC_A2 MAGNETIC -1.0 4.00000E-01 !
+ PHASE BCC_A2 %) 2 1 3 !
+  CONSTITUENT BCC_A2 :CO,FE : VA : !
+  PARAMETER G(BCC_A2,CO:VA;0)        298.15  +GCOBCC#;                 6000 N !
+  PARAMETER TC(BCC_A2,CO:VA;0)       298.15  +1450;                    6000 N !
+  PARAMETER BMAGN(BCC_A2,CO:VA;0)    298.15  +1.35;                    6000 N !
+  PARAMETER G(BCC_A2,FE:VA;0)        298.15  +GHSERFE#;                6000 N !
+  PARAMETER TC(BCC_A2,FE:VA;0)       298.15  +1043;                    6000 N !
+  PARAMETER BMAGN(BCC_A2,FE:VA;0)    298.15  +2.22;                    6000 N !
+  PARAMETER G(BCC_A2,CO,FE:VA;0)     298.15
+     -26222.7+125.000*T-15.502*T*LN(T)-632250*T**(-1);                 6000 N !
+  PARAMETER G(BCC_A2,CO,FE:VA;2)     298.15  +2686.79+632250*T**(-1);  6000 N !
+  PARAMETER TC(BCC_A2,CO,FE:VA;0)    298.15  +590;                     6000 N !
+  PARAMETER BMAGN(BCC_A2,CO,FE:VA;0) 298.15  +1.406;                   6000 N !
+  PARAMETER BMAGN(BCC_A2,CO,FE:VA;1) 298.15  -.6617;                   6000 N !
+
+$------------------------------------------------------------------------------
+$ PARAMETERS FOR FCC PHASE
+$------------------------------------------------------------------------------
+ TYPE_DEFINITION * GES A_P_D FCC_A1 MAGNETIC -3.0 2.80000E-01 !
+ PHASE FCC_A1 %* 2 1 1 !
+  CONSTITUENT FCC_A1 :CO,FE : VA : !
+  PARAMETER G(FCC_A1,CO:VA;0)        298.15  +GCOFCC#;                 6000 N !
+  PARAMETER TC(FCC_A1,CO:VA;0)       298.15  +1396;                    6000 N !
+  PARAMETER BMAGN(FCC_A1,CO:VA;0)    298.15  +1.35;                    6000 N !
+  PARAMETER G(FCC_A1,FE:VA;0)        298.15  +GFEFCC#;                 6000 N !
+  PARAMETER TC(FCC_A1,FE:VA;0)       298.15  -201;                     6000 N !
+  PARAMETER BMAGN(FCC_A1,FE:VA;0)    298.15  -2.1;                     6000 N !
+  PARAMETER G(FCC_A1,CO,FE:VA;0)     298.15  -8968.75;                 6000 N !
+  PARAMETER G(FCC_A1,CO,FE:VA;2)     298.15  +3528.8;                  6000 N !
+  PARAMETER TC(FCC_A1,CO,FE:VA;0)    298.15  +283;                     6000 N !
+  PARAMETER TC(FCC_A1,CO,FE:VA;1)    298.15  +879;                     6000 N !
+  PARAMETER BMAGN(FCC_A1,CO,FE:VA;0) 298.15  +8.407;                   6000 N !
+  PARAMETER BMAGN(FCC_A1,CO,FE:VA;1) 298.15  -3.644;                   6000 N !
+
+$------------------------------------------------------------------------------
+$ PARAMETERS FOR HCP PHASE
+$------------------------------------------------------------------------------
+ TYPE_DEFINITION + GES A_P_D HCP_A3 MAGNETIC -3.0 2.80000E-01 !
+ PHASE HCP_A3 %+ 2 1 .5 !
+  CONSTITUENT HCP_A3 :CO,FE : VA : !
+  PARAMETER G(HCP_A3,CO:VA;0)        298.15  +GHSERCO#;                6000 N !
+  PARAMETER TC(HCP_A3,CO:VA;0)       298.15  +1396;                    6000 N !
+  PARAMETER BMAGN(HCP_A3,CO:VA;0)    298.15  +1.35;                    6000 N !
+  PARAMETER G(HCP_A3,FE:VA;0)        298.15  +GFEHCP#;                 6000 N !
+  PARAMETER G(HCP_A3,CO,FE:VA;0)     298.15  +5000;                    6000 N !
+  PARAMETER TC(HCP_A3,CO,FE:VA;0)    298.15  -253;                     6000 N !
+  PARAMETER TC(HCP_A3,CO,FE:VA;1)    298.15  +1494;                    6000 N !
+  PARAMETER BMAGN(HCP_A3,CO,FE:VA;0) 298.15  +5.41;                    6000 N !
+  PARAMETER BMAGN(HCP_A3,CO,FE:VA;1) 298.15  -.24;                     6000 N !
+$
+$------------------------------------------------------------ END OF LINE
+ 
