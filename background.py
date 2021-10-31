@@ -34,6 +34,7 @@ def find_potentials(m,x,y,test,comp=0):
         val=m*(comp-x)+y
         return val
 def csvform(e1,e2,phase_name,temper,data,keys):
+    print("writen")
     name=e1+"-"+e2+" |"+phase_name+"| T="+str(temper)+".csv"
     csv_columns = keys
     # print(data)
