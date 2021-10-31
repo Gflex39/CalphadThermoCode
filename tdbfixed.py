@@ -8,7 +8,8 @@ import numpy as np
 import os
 import matplotlib as mpl
 import time
-# cur=os.path.dirname(__file__)
+cur=os.path.dirname(__file__)
+os.chdir(cur)
 # print(cur)
 # print("---------------------------------")
 import mendeleev as me
@@ -438,13 +439,13 @@ class tdb:
 # CuNi.composition(.4)
 # CuNi.phase_diagram()
 # if True:
-for i in range(1):
-    FeNi=tdb('Fe-Ni.tdb',['Ni', 'Fe','VA'],500+10*i,['BCC_A2','BCC4','FCC4'],['LIQUID','BCC_A2','FCC_A1','FCC4','BCC4'],catalog=True,interest="FCC4")
-    FeNi.graphdata("EntropyM",True)
+for i in range(20):
+    FeCr=tdb('Fe-Cr.tdb',['Cr', 'Fe','VA'],943+10*i,[],['LIQUID','BCC_A2','FCC_A1','SIGMA'],catalog=True,interest='BCC_A2')
+    FeCr.graphdata('EntropyM',True)
 
 # CuNi=tdb('Cu-Ni.tdb',['Cu', 'Ni','CU%','VA%','NI%'],1150+10*i,[],['LIQUID','FCC_A1'],catalog=True,interest='FCC_A1')
 # CuNi.graphdata('EntropyM',True)
-# FeCo=tdb('Fe-Ni.tdb',['Ni', 'Fe','VA'],950,[],['LIQUID','BCC_A2','FCC_A1'])
+# FeNi=tdb('Fe-Ni.tdb',['Ni', 'Fe','VA'],950,[],['LIQUID','BCC_A2','FCC_A1'])
 # FeCr=tdb('Fe-Cr.tdb',['Cr', 'Fe','VA'],950,[],['LIQUID','BCC_A2','FCC_A1','SIGMA'])
 clock=time.time()
 # CuNi.phase_diagram()
