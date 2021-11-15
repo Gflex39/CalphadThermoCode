@@ -10,14 +10,9 @@ import matplotlib as mpl
 import time
 cur=os.path.dirname(__file__)
 os.chdir(cur)
-# print(cur)
-# print("---------------------------------")
 import mendeleev as me
 class tdb:
     def __init__(self,filename,comps,temp,surfaces,phases,full=True,catalog=False,interest='LIQUID'):
-        # if cur[0]:
-            # print(cur[1])
-            # os.chdir(cur[1])
         self.interest=interest
         self.inverse={}
         self.catalog=catalog
@@ -73,13 +68,8 @@ class tdb:
             
             for j in range(len(self.curr[self.interest]['x'])):
                 for k in range(len(self.easy)):
-                    # print(abs(self.curr['LIQUID']['x'][j]-self.easy[k]))
-                    # print(self.easy[k])
-                    # print(self.check[k])
-
                     if abs(self.curr[self.interest]['x'][j]-self.easy[k])<.005 and self.check[k]:
                         if i==temp:
-                            # print("Gibbbs added: "+str(self.curr['LIQUID']['y'][j]))
                             self.Gibbs[k]=self.curr[self.interest]['y'][j]
                         self.vals[k].append(self.curr[self.interest]['y'][j])
                         self.check[k]=False
@@ -89,23 +79,11 @@ class tdb:
                     which=False
                 if self.Gibbs[j]==0:
                     if i==temp:
-                        # print("Gibbbs added: "+str(self.curr['LIQUID']['y'][j]))
                         self.Gibbs[j]=bottomy
                         if which:  
                             self.vals[j]=[bottomy for i in np.around(np.arange(temp-2,temp+2,1),3)]
                         else:
                             self.vals[j]=[topy for i in np.around(np.arange(temp-2,temp+2,1),3)]
-
-                    
-                    
-
-
-                        
-
-                
-            
-
-
         if full:   
             self.potestimate=[]
             self.potderivative=[]
@@ -133,19 +111,10 @@ class tdb:
         self.hull = ConvexHull(self.hullval)
         
 
-        # plt.plot(hullval[:][0], hullval[:][1], 'o')
-        #for simplex in hull.simplices:
-
-        #plt.plot(hullval[simplex,0], hullval[simplex,1], 'k-')
-        #plt.plot(hullval[hull.vertices,0], hullval[hull.vertices,1], 'r--', lw=2)
-        #plt.plot(hullval[hull.vertices[0],0], hullval[hull.vertices[0],1], 'ro')
         
     def potfinder(self,temper,plot):
 
         
-        # Load database and choose the phases that will be plotted
-        # db_nbre = Database('Mg-Bi.tdb')
-        # print(os.getcwd())
         db_nbre = Database(self.filename)
         my_phases_nbre = self.phases
 
@@ -157,10 +126,8 @@ class tdb:
         # Loop over phases, calculate the Gibbs energy, and scatter plot GM vs. X(RE)
         phase_potentials={}
         for phase_name in my_phases_nbre:
-            # if True:
             try:
-                # assert False
-                # print(phase_name)
+
                 
                 phase_potentials[phase_name]=background.checkdata(self.graphcomp[1], self.graphcomp[0], phase_name, temper)
 
@@ -227,7 +194,7 @@ class tdb:
                     print("We good")
                     phase_potentials[phase_name]={'alpha':empty,'beta':empty,'x':x,'y':y}
                 if self.catalog:
-                    background.csvform(self.graphcomp[1], self.graphcomp[0], phase_name, temper,phase_potentials[phase_name],['alpha','beta','x','y'])
+                    background.csvform(self.graphcomp[1], self.graphcomp[0], phase_name, temper,phase_potentials[phase_name],['alpha','beta','x','y'],give=False)
 
                 
             
@@ -269,10 +236,7 @@ class tdb:
         gibbmix=[]
         for i in range(len(self.easy)):
             entropymix.append(self.entropy[i]-(self.easy[i]*self.entropy[-1]+(1-self.easy[i])*self.entropy[0]))
-            # print(str(entropy[i])+"-"+(str(easy[i])+"*"+str(entropy[-1])+"+"+(str(1-easy[i]))+"*"+str(entropy[0]))+" = "+str(entropy[i]-(easy[i]*entropy[-1]+(1-easy[i])*entropy[0])))
-
             enthalpymix.append(self.enthalpy[i]-(self.easy[i]*self.enthalpy[-1]+(1-self.easy[i])*self.enthalpy[0]))
-            # print(str(enthalpy[i])+"-"+(str(easy[i])+"*"+str(enthalpy[-1])+"+"+(str(1-easy[i]))+"*"+str(enthalpy[0]))+" = "+str(enthalpy[i]-(easy[i]*enthalpy[-1]+(1-easy[i])*enthalpy[0])))
             gibbmix.append(self.Gibbs[i]-(self.easy[i]*self.Gibbs[-1]+(1-self.easy[i])*self.Gibbs[0]))
             self.Egibb.append(gibbmix[i]-self.Igibb[i])
             self.Eentropy.append(entropymix[i]-self.Ientropy[i])
@@ -300,13 +264,15 @@ class tdb:
         elif name=='EntropyM':
             plt.plot(self.easy,entropymix)
             if catalog:
-                background.csvform(self.graphcomp[1], self.graphcomp[0]+" Entropy", self.interest, self.temp,{'x':self.easy,'y':entropymix,'temp':[self.temp for i in self.easy]},['x','y','temp'])
+                background.csvform(self.graphcomp[1], self.graphcomp[0]+" Entropy", self.interest, self.temp,{'x':self.easy,'y':entropymix,'temp':[self.temp for i in self.easy]},['x','y','temp'],give=True)
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
-            ax3.set_ylabel('Molar Entropy of Mixing (J/K)',fontsize=16)
+            ax3.set_ylabel('Molar Entropy of Mixing (J/Kmol)',fontsize=16)
             ax3.set_title(' Molar Entropy of Mixing of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
             ax3.set_xlim((0, 1))
         elif name=='EnthalpyM':
             plt.plot(self.easy,enthalpymix)
+            # if catalog:
+            #     background.csvform(self.graphcomp[1], self.graphcomp[0]+" Enthalpy", self.interest, self.temp,{'x':self.easy,'y':enthalpymix,'temp':[self.temp for i in self.easy]},['x','y','temp'],give=True)
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
             ax3.set_ylabel('Molar Enthalpy of Mixing (J)',fontsize=16)
             ax3.set_title(' Molar Enthalpy of Mixing of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
@@ -351,11 +317,6 @@ class tdb:
                     mode=sides
                     modey=self.hullval[simplex,1]
 
-                    
-            
-            # print((self.hullval[simplex,0], self.hullval[simplex,1]))
-            
-        # plt.plot(self.hullval[simplex,0], self.hullval[simplex,1], 'k-')
         
         for i in range(2):
             breaker=False
@@ -363,8 +324,6 @@ class tdb:
                 if breaker:
                     break
                 for k in range(len(self.act[j]['x'])):
-                    # print(mode[i]-self.act[j]['x'][k])
-                    # print(modey[i]-self.act[j]['y'][k])
                     if mode[i]==self.act[j]['x'][k] and modey[i]==self.act[j]['y'][k]:
                         phase.append(j)
                         breaker==True
@@ -372,15 +331,12 @@ class tdb:
         if mode[1]<mode[0]:
             mode=[mode[1],mode[0]]
             modey=[modey[1],modey[0]]
-            # print(phase)
             phase=[phase[1],phase[0]]
         if phase[0]==phase[1]:
-            # print(phase[0])
             return phase[0]
         else:
             range_=mode[1]-mode[0]
             diff=comp-mode[0]
-            # print(str(np.round(diff/range_*100,2))+"% "+phase[0]+" and "+str(np.round((1-diff/range_)*100,2))+"% "+phase[1])
             return None
     def phase_diagram(self):
         points=[]
@@ -390,20 +346,15 @@ class tdb:
         for i in range(len(layers)):
             if i%100==0:
                 print(i)
-            # print("#####################################################################################")
             for j in self.easy[1:-1]:
-                # print(self.temp-30+i)
-                # print(j)
-                # print("*******************************************************************************")
+
                 points.append([j,self.temp-150+i,layers[i].composition(j)])
         fig4=plt.figure(4)
         ax4=fig4.gca()
         for i in points:
             if i[2] in self.color_dict.keys():
                 ax4.scatter(i[0],i[1],color=self.color_dict[i[2]],s=30)
-                # ax4.add_patch(mpl.patches.Circle((i[0],i[1]), radius=0.5,color=self.color_dict[i[2]]))
             else:
-                # ax4.add_patch(mpl.patches.Circle((i[0],i[1]), radius=0.5,color='hotpink'))
                 ax4.scatter(i[0],i[1],color='hotpink',s=30)
         ax4.legend(handles=self.legend_handles, loc='center left', bbox_to_anchor=(1, 0.6))
         ax4.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
@@ -439,15 +390,19 @@ class tdb:
 # CuNi.composition(.4)
 # CuNi.phase_diagram()
 # if True:
-for i in range(20):
-    FeCr=tdb('Fe-Cr.tdb',['Cr', 'Fe','VA'],943+10*i,[],['LIQUID','BCC_A2','FCC_A1','SIGMA'],catalog=True,interest='BCC_A2')
-    FeCr.graphdata('EntropyM',True)
+phas=['BCC_A2','FCC_A1','FCC4','BCC4']
+# for j in phas:
+if True: 
+    kelvin=200+273
+    for i in range(1):
+        FeNi=tdb('Fe-Ni.tdb',['Ni', 'Fe','VA'],kelvin,['BCC_A2','FCC4','BCC4'],['LIQUID','BCC_A2','FCC_A1','FCC4','BCC4'],interest='FCC_A1')
+        FeNi.graphdata('EntropyM',True)
 
 # CuNi=tdb('Cu-Ni.tdb',['Cu', 'Ni','CU%','VA%','NI%'],1150+10*i,[],['LIQUID','FCC_A1'],catalog=True,interest='FCC_A1')
 # CuNi.graphdata('EntropyM',True)
 # FeNi=tdb('Fe-Ni.tdb',['Ni', 'Fe','VA'],950,[],['LIQUID','BCC_A2','FCC_A1'])
 # FeCr=tdb('Fe-Cr.tdb',['Cr', 'Fe','VA'],950,[],['LIQUID','BCC_A2','FCC_A1','SIGMA'])
-clock=time.time()
-# CuNi.phase_diagram()
-print(time.time()-clock)
+# clock=time.time()
+# # CuNi.phase_diagram()
+# print(time.time()-clock)
 plt.show()

@@ -33,14 +33,18 @@ def find_potentials(m,x,y,test,comp=0):
     else:
         val=m*(comp-x)+y
         return val
-def csvform(e1,e2,phase_name,temper,data,keys):
-    print("writen")
-    name=e1+"-"+e2+" |"+phase_name+"| T="+str(temper)+".csv"
+def csvform(e1,e2,phase_name,temper,data,keys,give=False):
+    
+    if give:
+        name=e1+"-"+e2+" |"+phase_name+".csv"
+    else:
+        name=e1+"-"+e2+" |"+phase_name+"| T="+str(temper)+".csv"
+    
     csv_columns = keys
     # print(data)
     cur=os.path.dirname(__file__)
     os.chdir(cur+"/Data_Files_"+e1+"_"+e2)
-    with open(name, "w+") as f:
+    with open(name, "a") as f:
         writer = csv.writer(f,delimiter = "\t")
         writer.writerow(csv_columns)
         # print(list(zip(*[data[key] for key in csv_columns]))[0])
