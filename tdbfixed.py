@@ -1,4 +1,5 @@
 #TDB
+
 import background
 from scipy.spatial import ConvexHull, convex_hull_plot_2d
 import matplotlib.pyplot as plt
@@ -8,6 +9,7 @@ import numpy as np
 import os
 import matplotlib as mpl
 import time
+import pandas as pd
 cur=os.path.dirname(__file__)
 os.chdir(cur)
 import mendeleev as me
@@ -23,7 +25,7 @@ class tdb:
         self.temp=temp
         self.surfaces=surfaces
         self.phases=phases
-        self.easy=np.around(np.arange(0,1.05,.05),2)
+        self.easy=np.around(np.arange(0,1.01,.01),2)
         def checker(comp):
             if comp != 'VA' and '%'  not in comp: 
                 return me.element(comp).name 
@@ -90,8 +92,6 @@ class tdb:
             self.entropy=[]
             self.enthalpy=[]
             self.Igibb=[background.ideal_gibbs(i, self.temp) for i in self.easy]
-            # for i in range(len(self.Igibb)):
-            #     print([self.easy[i],self.Igibb[i]])
             self.Ientropy=[background.ideal_entropy(i) for i in self.easy]
             self.Egibb=[]
             self.Eentropy=[]
@@ -105,7 +105,7 @@ class tdb:
 
         
         #This commented portion takes the values attained and turns them into a csv file labeling what it is
-        # background.csvform("Mg", "Bi", phase_name, temper)
+
         #This finds the convex hull of the plot
         self.hullval=np.array(self.hullval)
         self.hull = ConvexHull(self.hullval)
@@ -244,10 +244,10 @@ class tdb:
         fig3=plt.figure(3)
         ax3=fig3.gca()
         if name=='Entropy':
-            plt.plot(self.easy,self.entropy)
+            plt.plot(self.easy,self.entropy,label="Calculated Data")
             ax3.set_xlabel('Mole Percent of '+self.graphcomp[1],fontsize=16)
             ax3.set_ylabel('Molar Entropy (J/K)',fontsize=16)
-            ax3.set_title(' Molar Entropy of '+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
+            ax3.set_title(' Molar Entropy of '+self.interest+" phase in "+self.graphcomp[1]+'-'+self.graphcomp[0]+' System at '+str(self.temp)+"\xb0"+" K")
             ax3.set_xlim((0, 1))
         elif name=='GibbsM':
             plt.plot(self.easy,gibbmix)
@@ -305,7 +305,7 @@ class tdb:
         else:
             print("Dont have that data")
     def composition(self, comp):
-        # print(comp)
+        
         mode=[]
         modey=[]
         phase=[]
@@ -390,17 +390,36 @@ class tdb:
 # CuNi.composition(.4)
 # CuNi.phase_diagram()
 # if True:
-phas=['BCC_A2','FCC_A1','FCC4','BCC4']
+# phas=['BCC_A2','FCC_A1','FCC4','BCC4']
 # for j in phas:
-if True: 
-    kelvin=200+273
-    for i in range(1):
-        FeNi=tdb('Fe-Ni.tdb',['Ni', 'Fe','VA'],kelvin,['BCC_A2','FCC4','BCC4'],['LIQUID','BCC_A2','FCC_A1','FCC4','BCC4'],interest='FCC_A1')
-        FeNi.graphdata('EntropyM',True)
+# if True: 
+#     kelvin=400+273
+#     for i in range(1):
+#         FeNi=tdb('Fe-Ni.tdb',['Ni', 'Fe','VA'],kelvin,['BCC_A2','FCC4','BCC4'],['LIQUID','BCC_A2','FCC_A1','FCC4','BCC4'],interest='FCC_A1')
+#         # CuNi=tdb('Cu-Ni.tdb',['Cu', 'Ni','CU%','VA%','NI%'],kelvin,[],['LIQUID','FCC_A1'],catalog=True,interest='FCC_A1')
+#         # FeCr=tdb('Fe-Cr.tdb',['Cr', 'Fe','VA'],kelvin,[],['LIQUID','BCC_A2','FCC_A1','SIGMA'],catalog=True,interest="BCC_A2")
+        
+#         FeNi.graphdata('Entropy',True)
+        
+#         fig3=plt.figure(3)
+#         ax3=fig3.gca()
+#         compx=[]
+#         compy=[]
+#         df = pd.read_excel(io="Re__YO/FeNiFCCA1l.xls")
+
+#         print(df["S(J)"])
+#         for i in df["S(J)"]:
+#             compx.append(i)
+#         for i in df["Alpha"]:
+#             compy.append(i)
+        
+#         plt.plot(compy,compx,label="Factsage Data")
+#         ax3.legend(loc='center left', bbox_to_anchor=(1, 0.6))
+
 
 # CuNi=tdb('Cu-Ni.tdb',['Cu', 'Ni','CU%','VA%','NI%'],1150+10*i,[],['LIQUID','FCC_A1'],catalog=True,interest='FCC_A1')
 # CuNi.graphdata('EntropyM',True)
-# FeNi=tdb('Fe-Ni.tdb',['Ni', 'Fe','VA'],950,[],['LIQUID','BCC_A2','FCC_A1'])
+FeNi=tdb('Fe-Ni.tdb',['Ni', 'Fe','VA'],950,[],['LIQUID','BCC_A2','FCC_A1'])
 # FeCr=tdb('Fe-Cr.tdb',['Cr', 'Fe','VA'],950,[],['LIQUID','BCC_A2','FCC_A1','SIGMA'])
 # clock=time.time()
 # # CuNi.phase_diagram()

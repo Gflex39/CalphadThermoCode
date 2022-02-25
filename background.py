@@ -44,18 +44,11 @@ def csvform(e1,e2,phase_name,temper,data,keys,give=False):
     # print(data)
     cur=os.path.dirname(__file__)
     os.chdir(cur+"/Data_Files_"+e1+"_"+e2)
-    with open(name, "a") as f:
+    with open(name, "w+") as f:
         writer = csv.writer(f,delimiter = "\t")
         writer.writerow(csv_columns)
-        # print(list(zip(*[data[key] for key in csv_columns]))[0])
         writer.writerows(zip(*[data[key] for key in csv_columns]))
     os.chdir(cur)
-        # row_writer=csv.writer(f,delimiter=',')
-        # try:
-        #     for i in range(len(data)):
-        #         row_writer.writerow([str(x[i]),str(y[i])])
-        # except TypeError:
-        #         row_writer.writerow([str(x),str(y)])
 def checkdata(e1,e2,phase_name,temper):
     data={}
     transfer={}
