@@ -1,4 +1,10 @@
 #TDB
+"""Using this program takes a few simple steps
+   1. Downlaod the TDB file for your system.
+   https://cpddb.nims.go.jp/cpddb/periodic.htm
+   2. Run stck to check if they have any surfaces
+   3. Using this file to create objects associated with the system
+   4.Extract the information that you want """
 
 import background
 from scipy.spatial import ConvexHull, convex_hull_plot_2d
